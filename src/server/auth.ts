@@ -2,6 +2,7 @@ import { scope, spotifyApi } from '@/config/spotify'
 import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { TRPCError } from '@trpc/server'
 import { type GetServerSidePropsContext } from 'next'
 import {
   getServerSession,
@@ -18,9 +19,9 @@ import SpotifyProvider from 'next-auth/providers/spotify'
  */
 declare module 'next-auth' {
   interface Session extends DefaultSession {
+    error?: string
     user: {
       id: string
-      error?: string
       // ...other properties
       // role: UserRole;
     } & DefaultSession['user']
@@ -63,6 +64,7 @@ export const authOptions: NextAuthOptions = {
           })
         } catch (error) {
           console.error('Error', error)
+          throw new TRPCError({ code: 'BAD_REQUEST' })
         }
       }
       return {
