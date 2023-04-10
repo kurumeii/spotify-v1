@@ -27,7 +27,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
   // if (!mounted) return null
   return (
     <>
-      <main className={`${inter.className} h-screen w-full overflow-hidden`}>
+      <main
+        className={`${inter.className} h-screen w-full select-none overflow-hidden`}
+      >
         <ThemeProvider
           attribute='data-theme'
           defaultTheme={THEME.DARK}

@@ -1,17 +1,34 @@
-import useToggleTheme from '@/hooks/useToggleTheme'
 import { HomeIcon, LibraryIcon, ListPlusIcon, SearchIcon } from 'lucide-react'
-import { type FC } from 'react'
+import Link from 'next/link'
+import { type ButtonHTMLAttributes, type FC } from 'react'
 import Playlist from './Playlist'
+import SpotifyLogo from './SpotifyLogo'
 import { Separator } from './ui/Separator'
 
-type SidebarProps = { icon: JSX.Element; label: string }
+type SidebarProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  icon: JSX.Element
+  label: string
+  link?: string
+}
 
-const SideBarBtn: FC<SidebarProps> = ({ icon: Icon, label }) => {
+const SideBarBtn: FC<SidebarProps> = ({
+  icon: Icon,
+  label,
+  link,
+  ...props
+}) => {
   return (
-    <button className='flex w-full items-center gap-x-2 p-2 transition-colors hover:text-base-content '>
-      <Icon className='h-6 w-6' />
-      <span className='first-letter:uppercase'>{label}</span>
-    </button>
+    <>
+      <Link href={link ?? '/#'} replace>
+        <button
+          className='flex w-full items-center gap-x-2 px-2 pt-2 transition-colors hover:text-base-content'
+          {...props}
+        >
+          <Icon className='h-6 w-6' />
+          <span className='first-letter:uppercase'>{label}</span>
+        </button>
+      </Link>
+    </>
   )
 }
 
@@ -19,33 +36,37 @@ const coreFunctionBtn: Array<SidebarProps> = [
   {
     icon: HomeIcon,
     label: 'home',
+    link: '/',
   },
   {
     icon: SearchIcon,
     label: 'search',
+    link: '/search',
   },
   {
     icon: LibraryIcon,
     label: 'Library',
-  },
-  {
-    icon: ListPlusIcon,
-    label: 'create new playlist',
+    link: 'collection',
   },
 ]
 
 const Sidebar = () => {
-  const { toggleTheme } = useToggleTheme()
-
   return (
-    <div className='hidden h-screen w-[300px] bg-base-300 px-5 py-7 text-gray-500 md:block md:max-w-md'>
+    <div className='hidden h-screen w-[300px] bg-base-300 px-5 py-7 text-base-content md:block md:max-w-md'>
       <div className='flex h-full flex-col space-y-4 '>
-        <button className='btn-success btn' onClick={toggleTheme}>
-          Change
-        </button>
+        <Link href='/'>
+          <SpotifyLogo />
+        </Link>
         {coreFunctionBtn.map(({ ...props }, id) => (
           <SideBarBtn key={id} {...props} />
         ))}
+        <div className='pt-4'>
+          <SideBarBtn
+            icon={ListPlusIcon}
+            label='Create new library'
+            onClick={() => console.log('asd')}
+          />
+        </div>
         <Separator />
         {/* Get playlist from current users */}
         <Playlist />

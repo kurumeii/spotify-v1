@@ -3,7 +3,6 @@ import { spotifyApi } from '@/config/spotify'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { type PrismaClient } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
 
 const getAccountDetail = async (prisma: PrismaClient, userId: string) => {
   const accountDetail = await prisma.account.findFirst({
@@ -61,30 +60,39 @@ export const mainRouter = createTRPCRouter({
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }
   }),
-  togglePausePlay: protectedProcedure
-    .input(
-      z.object({
-        state: z.enum(['play', 'pause']),
-      })
+  // togglePausePlay: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       state: z.enum(['play', 'pause']),
+  //     })
+  //   )
+  //   .mutation(async ({ ctx, input }) => {
+  //     const { access_token } = await getAccountDetail(
+  //       ctx.prisma,
+  //       ctx.session.user.id
+  //     )
+  //     try {
+  //       spotifyApi.setAccessToken(access_token)
+  //       input.state === 'play'
+  //         ? await spotifyApi.play()
+  //         : input.state === 'pause'
+  //         ? await spotifyApi.pause()
+  //         : ''
+  //       return {
+  //         data: 'ok',
+  //       }
+  //     } catch (error) {
+  //       console.error(error)
+  //       throw new TRPCError({ code: 'BAD_REQUEST' })
+  //     }
+  //   }),
+  getToken: protectedProcedure.query(async ({ ctx }) => {
+    const { access_token } = await getAccountDetail(
+      ctx.prisma,
+      ctx.session.user.id
     )
-    .mutation(async ({ ctx, input }) => {
-      const { access_token } = await getAccountDetail(
-        ctx.prisma,
-        ctx.session.user.id
-      )
-      try {
-        spotifyApi.setAccessToken(access_token)
-        input.state === 'play'
-          ? await spotifyApi.play()
-          : input.state === 'pause'
-          ? await spotifyApi.pause()
-          : ''
-        return {
-          data: 'ok',
-        }
-      } catch (error) {
-        console.error(error)
-        throw new TRPCError({ code: 'BAD_REQUEST' })
-      }
-    }),
+    return {
+      access_token,
+    }
+  }),
 })
