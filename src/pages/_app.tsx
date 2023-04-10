@@ -6,7 +6,7 @@ import { api } from '@/utils/api'
 
 import '@/styles/globals.css'
 import { ThemeProvider } from 'next-themes'
-import { useEffect, useState } from 'react'
+// import { useEffect, useState } from 'react'
 import { THEME } from '@/hooks/useToggleTheme'
 import { Inter } from 'next/font/google'
 const inter = Inter({
@@ -18,17 +18,21 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const [mounted, setMounted] = useState(false)
+  // const [mounted, setMounted] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  // useEffect(() => {
+  //   setMounted(true)
+  // }, [])
 
-  if (!mounted) return null
+  // if (!mounted) return null
   return (
     <>
       <main className={`${inter.className} h-screen w-full overflow-hidden`}>
-        <ThemeProvider attribute='data-theme' defaultTheme={THEME.DARK}>
+        <ThemeProvider
+          attribute='data-theme'
+          defaultTheme={THEME.DARK}
+          themes={[THEME.DARK, THEME.LIGHT]}
+        >
           <SessionProvider session={session}>
             <Component {...pageProps} />
           </SessionProvider>
