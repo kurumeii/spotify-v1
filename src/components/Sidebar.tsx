@@ -38,9 +38,9 @@ const Sidebar = () => {
   const { toggleTheme } = useToggleTheme()
 
   return (
-    <div className='hidden h-screen w-[300px] bg-base-200 px-5 py-7 text-gray-500 md:block md:max-w-md'>
+    <div className='hidden h-screen w-[300px] bg-base-300 px-5 py-7 text-gray-500 md:block md:max-w-md'>
       <div className='flex h-full flex-col space-y-4 '>
-        <button className='btn-outline btn-success btn' onClick={toggleTheme}>
+        <button className='btn-success btn' onClick={toggleTheme}>
           Change
         </button>
         {coreFunctionBtn.map(({ ...props }, id) => (

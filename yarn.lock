@@ -595,6 +595,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/spotify-api@npm:^0.0.21":
+  version: 0.0.21
+  resolution: "@types/spotify-api@npm:0.0.21"
+  checksum: 37117058861420ff0ff37af1769537e1b60043e220eed23e91fb89098a67fb1f722c4aa91fa5ed139c463cbb481c65bc9ad00ed05b9da1e2a4998748703ec416
+  languageName: node
+  linkType: hard
+
 "@types/spotify-web-api-node@npm:^5.0.7":
   version: 5.0.7
   resolution: "@types/spotify-web-api-node@npm:5.0.7"
@@ -4241,6 +4248,7 @@ __metadata:
     "@types/prettier": ^2.7.2
     "@types/react": ^18.0.28
     "@types/react-dom": ^18.0.11
+    "@types/spotify-api": ^0.0.21
     "@types/spotify-web-api-node": ^5.0.7
     "@typescript-eslint/eslint-plugin": ^5.56.0
     "@typescript-eslint/parser": ^5.56.0
