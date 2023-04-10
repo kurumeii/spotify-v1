@@ -1,21 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { spotifyApi } from '@/config/spotify'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
-import { type PrismaClient } from '@prisma/client'
+import getAccountDetail from '@/utils/getToken'
 import { TRPCError } from '@trpc/server'
-
-const getAccountDetail = async (prisma: PrismaClient, userId: string) => {
-  const accountDetail = await prisma.account.findFirst({
-    where: {
-      userId,
-    },
-  })
-  if (!accountDetail) throw new TRPCError({ code: 'BAD_REQUEST' })
-  return {
-    access_token: accountDetail.access_token as string,
-    providerAccountId: accountDetail.providerAccountId,
-  }
-}
+import { z } from 'zod'
 
 export const mainRouter = createTRPCRouter({
   getUserPlaylist: protectedProcedure.query(async ({ ctx }) => {
@@ -60,32 +48,6 @@ export const mainRouter = createTRPCRouter({
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }
   }),
-  // togglePausePlay: protectedProcedure
-  //   .input(
-  //     z.object({
-  //       state: z.enum(['play', 'pause']),
-  //     })
-  //   )
-  //   .mutation(async ({ ctx, input }) => {
-  //     const { access_token } = await getAccountDetail(
-  //       ctx.prisma,
-  //       ctx.session.user.id
-  //     )
-  //     try {
-  //       spotifyApi.setAccessToken(access_token)
-  //       input.state === 'play'
-  //         ? await spotifyApi.play()
-  //         : input.state === 'pause'
-  //         ? await spotifyApi.pause()
-  //         : ''
-  //       return {
-  //         data: 'ok',
-  //       }
-  //     } catch (error) {
-  //       console.error(error)
-  //       throw new TRPCError({ code: 'BAD_REQUEST' })
-  //     }
-  //   }),
   getToken: protectedProcedure.query(async ({ ctx }) => {
     const { access_token } = await getAccountDetail(
       ctx.prisma,
@@ -95,4 +57,27 @@ export const mainRouter = createTRPCRouter({
       access_token,
     }
   }),
+  getDetailPlaylistById: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.string().min(1),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { access_token } = await getAccountDetail(
+        ctx.prisma,
+        ctx.session.user.id
+      )
+      spotifyApi.setAccessToken(access_token)
+      const { body: spotifyResponse } = await spotifyApi.getPlaylist(
+        input.playlistId,
+        {
+          market: 'VN',
+        }
+      )
+      if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
+      return {
+        ...spotifyResponse,
+      }
+    }),
 })

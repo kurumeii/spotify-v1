@@ -41,18 +41,16 @@ const coreFunctionBtn: Array<SidebarProps> = [
   {
     icon: SearchIcon,
     label: 'search',
-    link: '/search',
   },
   {
     icon: LibraryIcon,
     label: 'Library',
-    link: 'collection',
   },
 ]
 
 const Sidebar = () => {
   return (
-    <div className='hidden h-screen w-[300px] bg-base-300 px-5 py-7 text-base-content md:block md:max-w-md'>
+    <div className='hidden h-screen w-[300px] max-w-md bg-base-300 px-5 py-7 text-base-content md:block'>
       <div className='flex h-full flex-col space-y-4 '>
         <Link href='/'>
           <SpotifyLogo />

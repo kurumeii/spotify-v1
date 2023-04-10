@@ -1,5 +1,7 @@
 import { api } from '@/utils/api'
 import { Loader2Icon } from 'lucide-react'
+import Link from 'next/link'
+import React from 'react'
 
 const Playlist = () => {
   const { data, isInitialLoading, isSuccess } =
@@ -7,7 +9,6 @@ const Playlist = () => {
       refetchOnWindowFocus: false,
       refetchIntervalInBackground: true,
     })
-
   return (
     <>
       {isInitialLoading ?? (
@@ -15,10 +16,16 @@ const Playlist = () => {
           <Loader2Icon className='h-10 w-10 animate-spin stroke-green-500 ' />
         </div>
       )}
-      {isSuccess &&
-        data.spotifyResponse.items.map(({ id, name }) => (
-          <p key={id}>{name}</p>
-        ))}
+      <div className='no-scrollbar flex flex-col flex-wrap items-start gap-3 text-sm'>
+        {isSuccess &&
+          data.spotifyResponse.items.map(({ id, name }) => (
+            <Link key={id} href={`/playlist/${id}`}>
+              <button className=' text-gray-400 hover:text-white'>
+                {name}
+              </button>
+            </Link>
+          ))}
+      </div>
     </>
   )
 }
