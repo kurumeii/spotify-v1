@@ -51,7 +51,7 @@ const coreFunctionBtn: Array<SidebarProps> = [
 
 const Sidebar = () => {
   return (
-    <div className='hidden h-screen w-1/3 max-w-sm bg-base-300 px-5 py-7 text-base-content md:block'>
+    <div className='hidden h-screen w-1/5 min-w-max max-w-sm bg-base-300 px-5 py-7 text-sm text-base-content md:block'>
       <div className='flex h-full flex-col space-y-4 '>
         <Link href='/'>
           <SpotifyLogo />

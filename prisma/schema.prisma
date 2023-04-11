@@ -28,9 +28,6 @@ model Account {
   scope             String? @db.LongText
   id_token          String? @db.Text
   session_state     String?
-  externalURL       String  @db.Text
-  country           String  @db.VarChar(2)
-  isPremium         Boolean @default(false)
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])

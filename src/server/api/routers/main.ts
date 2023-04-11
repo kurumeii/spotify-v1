@@ -74,12 +74,12 @@ export const mainRouter = createTRPCRouter({
       ...body,
     }
   }),
-  getRecentlyPlayedTracks: protectedProcedure.query(async ({ ctx }) => {
+  getMyTopTracks: protectedProcedure.query(async ({ ctx }) => {
     const { access_token } = ctx.session.spotify
     spotifyApi.setAccessToken(access_token)
-    const { body, statusCode } = await spotifyApi.getMyRecentlyPlayedTracks({
+    const { body, statusCode } = await spotifyApi.getMyTopTracks({
       limit: 6,
-      before: 1,
+      time_range: 'short_term',
     })
     if (statusCode !== 200) {
       throw new TRPCError({ code: 'NOT_FOUND' })

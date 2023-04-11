@@ -17,7 +17,7 @@ const Playlist = () => {
           <Loader2Icon className='h-10 w-10 animate-spin stroke-green-500 ' />
         </div>
       )}
-      <div className='no-scrollbar flex flex-col flex-wrap items-start gap-3 text-sm'>
+      <div className='no-scrollbar flex flex-col flex-wrap items-start gap-x-3 gap-y-4 text-xs'>
         {isSuccess &&
           data.spotifyResponse.items.map(({ id, name }) => (
             <Link key={id} href={`/playlist/${id}`}>
