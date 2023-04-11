@@ -16,6 +16,7 @@ const CurrentTrack = () => {
       <div className='flex h-full w-full flex-1 items-center justify-center p-3'>
         <SpotifyPlayer
           token={currentTrackData.accessToken}
+          uris={currentTrackData.trackDetail?.uri ?? ''}
           name='Spotify v1 player'
           magnifySliderOnHover={true}
           showSaveIcon={true}

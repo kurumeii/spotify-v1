@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
-import { type NextPage } from 'next'
 import { signIn } from 'next-auth/react'
 import Head from 'next/head'
 import Image from 'next/image'
-const Login = (): NextPage => {
+
+const Login = () => {
   return (
     <>
       <Head>

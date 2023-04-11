@@ -1,4 +1,10 @@
-import { HomeIcon, LibraryIcon, ListPlusIcon, SearchIcon } from 'lucide-react'
+import {
+  HomeIcon,
+  LibraryIcon,
+  ListPlusIcon,
+  type LucideIcon,
+  SearchIcon,
+} from 'lucide-react'
 import Link from 'next/link'
 import { type ButtonHTMLAttributes, type FC } from 'react'
 import Playlist from './Playlist'
@@ -6,17 +12,12 @@ import SpotifyLogo from './SpotifyLogo'
 import { Separator } from './ui/Separator'
 
 type SidebarProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  icon: JSX.Element
+  Icon: LucideIcon
   label: string
   link?: string
 }
 
-const SideBarBtn: FC<SidebarProps> = ({
-  icon: Icon,
-  label,
-  link,
-  ...props
-}) => {
+const SideBarBtn: FC<SidebarProps> = ({ Icon, label, link, ...props }) => {
   return (
     <>
       <Link href={link ?? '/#'} replace>
@@ -34,16 +35,16 @@ const SideBarBtn: FC<SidebarProps> = ({
 
 const coreFunctionBtn: Array<SidebarProps> = [
   {
-    icon: HomeIcon,
+    Icon: HomeIcon,
     label: 'home',
     link: '/',
   },
   {
-    icon: SearchIcon,
+    Icon: SearchIcon,
     label: 'search',
   },
   {
-    icon: LibraryIcon,
+    Icon: LibraryIcon,
     label: 'Library',
   },
 ]
@@ -60,7 +61,7 @@ const Sidebar = () => {
         ))}
         <div className='pt-4'>
           <SideBarBtn
-            icon={ListPlusIcon}
+            Icon={ListPlusIcon}
             label='Create new library'
             onClick={() => console.log('asd')}
           />

@@ -7,7 +7,7 @@ import { SessionProvider } from 'next-auth/react'
 import { ThemeProvider } from 'next-themes'
 import { type AppProps } from 'next/app'
 import Head from 'next/head'
-import { type ReactElement } from 'react'
+import { type ReactNode, type ReactElement } from 'react'
 
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode

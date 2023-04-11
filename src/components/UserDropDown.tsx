@@ -37,15 +37,17 @@ const UserDropDown = () => {
                 'flex cursor-pointer items-center justify-center gap-x-2 rounded-full  px-2 py-1 text-sm font-bold '
               )}
             >
-              {userData.images[0] ? (
+              {userData.images !== undefined ? (
                 <div className='avatar'>
                   <div className='rounded-full'>
-                    <Image
-                      src={userData.images[0].url}
-                      alt={userData.images[0].url}
-                      width={20}
-                      height={20}
-                    />
+                    {userData.images[0] !== undefined && (
+                      <Image
+                        src={userData.images[0]?.url}
+                        alt={userData.images[0]?.url}
+                        width={20}
+                        height={20}
+                      />
+                    )}
                   </div>
                 </div>
               ) : (

@@ -40,10 +40,10 @@ export const authOptions: NextAuthOptions = {
           },
         })
       //Check if token is about to expire
-      if (expires_at * 1000 < Date.now()) {
+      if ((expires_at as number) * 1000 < Date.now()) {
         try {
           //Call spotify api to get new access token
-          spotifyApi.setRefreshToken(refresh_token)
+          spotifyApi.setRefreshToken(refresh_token as string)
           const { body: spotifyResponseBody } =
             await spotifyApi.refreshAccessToken()
           //Update database

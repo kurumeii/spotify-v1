@@ -53,14 +53,14 @@ const Home: NextPageWithLayout = () => {
       refetchOnWindowFocus: false,
     })
   const welcomeText = getDayNight() as string
-  if (isError) return null
+  if (isError || !recentlyPlayedData) return null
   return (
     <>
       <main className='no-scrollbar h-screen w-full overflow-y-auto px-8 pb-12 pt-36'>
         <p className='text-4xl font-bold'>Good {welcomeText}</p>
         <div className='grid grid-cols-3 gap-x-7 gap-y-5 pt-10'>
-          {recentlyPlayedData?.items.length > 0 &&
-            recentlyPlayedData?.items.map(({ track }) => (
+          {recentlyPlayedData.items.length > 0 &&
+            recentlyPlayedData.items.map(({ track }) => (
               <RecentlyPlayedTracks key={track.id} {...track} />
             ))}
         </div>
