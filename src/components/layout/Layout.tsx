@@ -2,6 +2,7 @@ import CurrentTrack from '@/components/CurrentTrack'
 import Sidebar from '@/components/Sidebar'
 import { Inter } from 'next/font/google'
 import { type FC } from 'react'
+import UserDropDown from '../UserDropDown'
 
 type Props = {
   children: JSX.Element
@@ -20,6 +21,7 @@ const Layout: FC<Props> = ({ children }) => {
       <Sidebar />
       {children}
       <CurrentTrack />
+      <UserDropDown />
     </main>
   )
 }

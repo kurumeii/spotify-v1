@@ -1,27 +1,25 @@
+import { THEME } from '@/hooks/useToggleTheme'
+import '@/styles/globals.css'
+import { api } from '@/utils/api'
+import { type NextPage } from 'next'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
-import { type AppType } from 'next/app'
-
-import { api } from '@/utils/api'
-
-import '@/styles/globals.css'
 import { ThemeProvider } from 'next-themes'
-// import { useEffect, useState } from 'react'
-import Layout from '@/components/layout/Layout'
-import { THEME } from '@/hooks/useToggleTheme'
+import { type AppProps } from 'next/app'
 import Head from 'next/head'
+import { type ReactElement } from 'react'
 
-const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}) => {
-  // const [mounted, setMounted] = useState(false)
+export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
 
-  // useEffect(() => {
-  //   setMounted(true)
-  // }, [])
+type MyAppProps = AppProps & {
+  Component: NextPageWithLayout
+}
 
-  // if (!mounted) return null
+const MyApp = ({ Component, pageProps: { ...pageProps } }: MyAppProps) => {
+  const getLayout = Component.getLayout ?? (page => page)
+
   return (
     <>
       <Head>
@@ -34,10 +32,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
         defaultTheme={THEME.DARK}
         themes={[THEME.DARK, THEME.LIGHT]}
       >
-        <SessionProvider session={session}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+        <SessionProvider session={pageProps.session as Session}>
+          {getLayout(<Component {...pageProps} />)}
         </SessionProvider>
       </ThemeProvider>
     </>

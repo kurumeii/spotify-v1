@@ -1,7 +1,10 @@
-import { type GetServerSideProps, type NextPage } from 'next'
+import { type GetServerSideProps } from 'next'
 
 import Center from '@/components/Center'
+import Layout from '@/components/layout/Layout'
 import { getServerAuthSession } from '@/server/auth'
+import { type ReactElement } from 'react'
+import { type NextPageWithLayout } from './_app'
 
 type Props = {
   session: Awaited<ReturnType<typeof getServerAuthSession>>
@@ -24,7 +27,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   }
 }
 
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   return (
     <>
       <main className=''>
@@ -33,5 +36,7 @@ const Home: NextPage = () => {
     </>
   )
 }
+
+Home.getLayout = (page: ReactElement) => <Layout>{page}</Layout>
 
 export default Home

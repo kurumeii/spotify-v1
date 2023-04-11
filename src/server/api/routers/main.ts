@@ -1,20 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { spotifyApi } from '@/config/spotify'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
-import getAccountDetail from '@/utils/getToken'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 export const mainRouter = createTRPCRouter({
   getUserPlaylist: protectedProcedure.query(async ({ ctx }) => {
-    const { access_token, providerAccountId } = await getAccountDetail(
-      ctx.prisma,
-      ctx.session.user.id
-    )
     try {
-      spotifyApi.setAccessToken(access_token)
+      const { session } = ctx
+      spotifyApi.setAccessToken(session.spotify.access_token)
       const { body: spotifyResponse } = await spotifyApi.getUserPlaylists(
-        providerAccountId,
+        session.spotify.providerAccountId,
         {
           limit: 10,
         }
@@ -28,33 +24,22 @@ export const mainRouter = createTRPCRouter({
     }
   }),
   getUserCurrentlyPlaying: protectedProcedure.query(async ({ ctx }) => {
-    const { access_token } = await getAccountDetail(
-      ctx.prisma,
-      ctx.session.user.id
-    )
+    const { session } = ctx
     try {
-      spotifyApi.setAccessToken(access_token)
+      spotifyApi.setAccessToken(session.spotify.access_token)
       const spotifyResponse = await spotifyApi.getMyCurrentPlayingTrack({
         market: 'VN',
       })
       if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
       const { is_playing, item } = spotifyResponse.body
       return {
+        accessToken: session.spotify.access_token,
         is_playing: is_playing,
         trackDetail: item,
       }
     } catch (error) {
       console.error(error)
       throw new TRPCError({ code: 'BAD_REQUEST' })
-    }
-  }),
-  getToken: protectedProcedure.query(async ({ ctx }) => {
-    const { access_token } = await getAccountDetail(
-      ctx.prisma,
-      ctx.session.user.id
-    )
-    return {
-      access_token,
     }
   }),
   getDetailPlaylistById: protectedProcedure
@@ -64,11 +49,8 @@ export const mainRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const { access_token } = await getAccountDetail(
-        ctx.prisma,
-        ctx.session.user.id
-      )
-      spotifyApi.setAccessToken(access_token)
+      const { session } = ctx
+      spotifyApi.setAccessToken(session.spotify.access_token)
       const { body: spotifyResponse } = await spotifyApi.getPlaylist(
         input.playlistId,
         {
@@ -76,8 +58,20 @@ export const mainRouter = createTRPCRouter({
         }
       )
       if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
+
       return {
         ...spotifyResponse,
       }
     }),
+  getUserProfileDetail: protectedProcedure.query(async ({ ctx }) => {
+    const { access_token, providerAccountId } = ctx.session.spotify
+    spotifyApi.setAccessToken(access_token)
+    const { body, statusCode } = await spotifyApi.getUser(providerAccountId)
+    if (statusCode !== 200 || !body) {
+      throw new TRPCError({ code: 'NOT_FOUND' })
+    }
+    return {
+      ...body,
+    }
+  }),
 })

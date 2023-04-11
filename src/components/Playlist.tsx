@@ -7,6 +7,7 @@ const Playlist = () => {
   const { data, isInitialLoading, isSuccess } =
     api.main.getUserPlaylist.useQuery(undefined, {
       refetchOnWindowFocus: false,
+      refetchInterval: 10 * 1000,
       refetchIntervalInBackground: true,
     })
   return (
@@ -20,7 +21,7 @@ const Playlist = () => {
         {isSuccess &&
           data.spotifyResponse.items.map(({ id, name }) => (
             <Link key={id} href={`/playlist/${id}`}>
-              <button className=' text-gray-400 hover:text-white'>
+              <button className='text-base-content opacity-80 hover:text-white'>
                 {name}
               </button>
             </Link>
