@@ -22,7 +22,7 @@ const SideBarBtn: FC<SidebarProps> = ({ Icon, label, link, ...props }) => {
     <>
       <Link href={link ?? '/#'} replace>
         <button
-          className='flex w-full items-center gap-x-2 px-2 pt-2 transition-colors hover:text-base-content'
+          className='flex w-full items-center gap-x-2 px-2 pt-2 opacity-80 transition-all   hover:opacity-100'
           {...props}
         >
           <Icon className='h-6 w-6' />

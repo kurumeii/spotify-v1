@@ -27,15 +27,16 @@ export const mainRouter = createTRPCRouter({
     const { session } = ctx
     try {
       spotifyApi.setAccessToken(session.spotify.access_token)
-      const spotifyResponse = await spotifyApi.getMyCurrentPlayingTrack({
+      const spotifyResponse = await spotifyApi.getMyCurrentPlaybackState({
         market: 'VN',
       })
       if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
-      const { is_playing, item } = spotifyResponse.body
+      const { is_playing, item, context } = spotifyResponse.body
       return {
         accessToken: session.spotify.access_token,
         is_playing: is_playing,
         trackDetail: item,
+        context,
       }
     } catch (error) {
       console.error(error)
