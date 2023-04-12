@@ -3,7 +3,7 @@ import { cn } from '@/utils/cn'
 import { HeadphonesIcon, Loader2Icon } from 'lucide-react'
 import Link from 'next/link'
 
-const Playlist = () => {
+const UserPlaylists = () => {
   const {
     data: userPlaylistData,
     isLoading,
@@ -50,4 +50,4 @@ const Playlist = () => {
   )
 }
 
-export default Playlist
+export default UserPlaylists

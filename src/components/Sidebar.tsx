@@ -2,13 +2,13 @@ import {
   HomeIcon,
   LibraryIcon,
   ListPlusIcon,
-  type LucideIcon,
   SearchIcon,
+  type LucideIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { type ButtonHTMLAttributes, type FC } from 'react'
-import Playlist from './Playlist'
 import SpotifyLogo from './SpotifyLogo'
+import UserPlaylists from './UserPlaylists'
 import { Separator } from './ui/Separator'
 
 type SidebarProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -51,7 +51,7 @@ const coreFunctionBtn: Array<SidebarProps> = [
 
 const Sidebar = () => {
   return (
-    <div className='hidden h-screen w-1/5 min-w-max max-w-sm bg-base-300 px-5 py-7 text-sm text-base-content md:block'>
+    <div className='hidden w-1/5 min-w-max max-w-sm bg-base-300 px-5 py-7 text-sm text-base-content md:block'>
       <div className='flex h-full flex-col space-y-4 '>
         <Link href='/'>
           <SpotifyLogo />
@@ -68,7 +68,7 @@ const Sidebar = () => {
         </div>
         <Separator />
         {/* Get playlist from current users */}
-        <Playlist />
+        <UserPlaylists />
       </div>
     </div>
   )
