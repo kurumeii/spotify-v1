@@ -5,7 +5,7 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 export const mainRouter = createTRPCRouter({
-  getUserPlaylist: protectedProcedure.query(async ({ ctx }) => {
+  getUserPlaylists: protectedProcedure.query(async ({ ctx }) => {
     try {
       const { session } = ctx
       spotifyApi.setAccessToken(session.spotify.access_token)
@@ -15,8 +15,18 @@ export const mainRouter = createTRPCRouter({
           limit: 10,
         }
       )
+      const { body: playingState } = await spotifyApi.getMyCurrentPlaybackState(
+        {
+          market: 'VN',
+        }
+      )
+      let playlistIsPlayingHref = ''
+      if (playingState.context !== null) {
+        playlistIsPlayingHref = playingState.context.href
+      }
       return {
         spotifyResponse,
+        playlistIsPlayingHref,
       }
     } catch (error) {
       console.error(error)
@@ -27,7 +37,7 @@ export const mainRouter = createTRPCRouter({
     const { session } = ctx
     try {
       spotifyApi.setAccessToken(session.spotify.access_token)
-      const spotifyResponse = await spotifyApi.getMyCurrentPlaybackState({
+      const spotifyResponse = await spotifyApi.getMyCurrentPlayingTrack({
         market: 'VN',
       })
       if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
@@ -56,6 +66,8 @@ export const mainRouter = createTRPCRouter({
         input.playlistId,
         {
           market: 'VN',
+          fields:
+            'public, href, id, images, name, owner(display_name), tracks.total',
         }
       )
       if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
@@ -89,4 +101,31 @@ export const mainRouter = createTRPCRouter({
       ...body,
     }
   }),
+  getTracksFromPlaylist: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.string().min(1),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { access_token } = ctx.session.spotify
+      spotifyApi.setAccessToken(access_token)
+      const tracksResponse = await spotifyApi.getPlaylistTracks(
+        input.playlistId,
+        {
+          market: 'VN',
+          limit: 10,
+          offset: 0,
+          fields:
+            'offset,items(added_at, track(name, duration_ms, uri, album))',
+        }
+      )
+
+      if (tracksResponse.statusCode !== 200)
+        throw new TRPCError({ code: 'NOT_FOUND' })
+
+      return {
+        ...tracksResponse.body,
+      }
+    }),
 })

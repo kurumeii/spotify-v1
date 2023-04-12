@@ -1794,6 +1794,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dayjs@npm:^1.11.7":
+  version: 1.11.7
+  resolution: "dayjs@npm:1.11.7"
+  checksum: 5003a7c1dd9ed51385beb658231c3548700b82d3548c0cfbe549d85f2d08e90e972510282b7506941452c58d32136d6362f009c77ca55381a09c704e9f177ebb
+  languageName: node
+  linkType: hard
+
 "debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
@@ -2881,6 +2888,15 @@ __metadata:
   dependencies:
     function-bind: ^1.1.1
   checksum: b9ad53d53be4af90ce5d1c38331e712522417d017d5ef1ebd0507e07c2fbad8686fffb8e12ddecd4c39ca9b9b47431afbb975b8abf7f3c3b82c98e9aad052792
+  languageName: node
+  linkType: hard
+
+"hoist-non-react-statics@npm:^3.0.0":
+  version: 3.3.2
+  resolution: "hoist-non-react-statics@npm:3.3.2"
+  dependencies:
+    react-is: ^16.7.0
+  checksum: b1538270429b13901ee586aa44f4cc3ecd8831c061d06cb8322e50ea17b3f5ce4d0e2e66394761e6c8e152cd8c34fb3b4b690116c6ce2bd45b18c746516cb9e8
   languageName: node
   linkType: hard
 
@@ -4444,7 +4460,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.13.1":
+"react-in-viewport@npm:^1.0.0-alpha.30":
+  version: 1.0.0-alpha.30
+  resolution: "react-in-viewport@npm:1.0.0-alpha.30"
+  dependencies:
+    hoist-non-react-statics: ^3.0.0
+  peerDependencies:
+    react: ^16.8.3 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.3 || ^17.0.0 || ^18.0.0
+  checksum: 1098ccdab9a10b8aadabf1a53f5809507e26db687a4243bd2dde2bdbecd1a8df66f4e9d00ee2a04bfd1542f937e758ef256d5fb6d637b4de5496e6252f84ce9e
+  languageName: node
+  linkType: hard
+
+"react-is@npm:^16.13.1, react-is@npm:^16.7.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: f7a19ac3496de32ca9ae12aa030f00f14a3d45374f1ceca0af707c831b2a6098ef0d6bdae51bd437b0a306d7f01d4677fcc8de7c0d331eb47ad0f46130e53c5f
@@ -4933,6 +4961,7 @@ __metadata:
     class-variance-authority: ^0.5.1
     clsx: ^1.2.1
     daisyui: ^2.51.5
+    dayjs: ^1.11.7
     eslint: ^8.36.0
     eslint-config-next: ^13.2.4
     framer-motion: ^10.11.2
@@ -4946,6 +4975,7 @@ __metadata:
     prisma: ^4.11.0
     react: 18.2.0
     react-dom: 18.2.0
+    react-in-viewport: ^1.0.0-alpha.30
     react-responsive: ^9.0.2
     react-spotify-web-playback: ^0.13.4
     spotify-web-api-node: ^5.0.2

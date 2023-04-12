@@ -13,10 +13,11 @@ import { type NextPageWithLayout } from '../_app'
 const Playlist: NextPageWithLayout = () => {
   const router = useRouter()
   const playlistId = router.query.id as string
+  const { isDarkTheme } = useToggleTheme()
   const { data: playlistData } = api.main.getDetailPlaylistById.useQuery({
     playlistId,
   })
-  const { isDarkTheme } = useToggleTheme()
+
   if (!playlistData) return null
   return (
     <>

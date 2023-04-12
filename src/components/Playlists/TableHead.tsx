@@ -1,5 +1,4 @@
-import { cn } from '@/utils/cn'
-import { Clock2Icon, TriangleIcon } from 'lucide-react'
+import { Clock2Icon } from 'lucide-react'
 import { Fragment } from 'react'
 
 const TableHead: FC = () => {
@@ -8,10 +7,10 @@ const TableHead: FC = () => {
     isSorted?: boolean
   }> = [
     { label: '#' },
-    { label: 'Title', isSorted: false },
-    { label: 'Album', isSorted: false },
-    { label: 'Date added', isSorted: true },
-    { label: <Clock2Icon />, isSorted: false },
+    { label: 'Title' },
+    { label: 'Album' },
+    { label: 'Date added' },
+    { label: <Clock2Icon /> },
   ]
   return (
     <thead className='sticky top-0 z-20'>
@@ -20,19 +19,9 @@ const TableHead: FC = () => {
           <Fragment key={idx}>
             <th>
               <div className='flex flex-1 flex-nowrap items-center gap-x-2'>
-                <span
-                  className={cn(
-                    'text-sm font-medium normal-case ',
-                    data.isSorted
-                      ? 'text-base-content'
-                      : 'text-base-content/50  hover:text-base-content'
-                  )}
-                >
+                <span className='text-sm font-medium normal-case text-base-content'>
                   {data.label}
                 </span>
-                {data.isSorted && (
-                  <TriangleIcon className='h-3 w-3 fill-green-500 stroke-transparent' />
-                )}
               </div>
             </th>
           </Fragment>
