@@ -17,14 +17,6 @@ const TableBody: FC = () => {
       playlistId,
     },
     {
-      refetchInterval: 10 * 1000,
-      refetchOnWindowFocus: false,
-    }
-  )
-  const { data: playingState } = api.main.getUserCurrentlyPlaying.useQuery(
-    undefined,
-    {
-      refetchInterval: 10 * 1000,
       refetchOnWindowFocus: false,
     }
   )
@@ -46,13 +38,6 @@ const TableBody: FC = () => {
                 </th>
                 <td>
                   <div className='inline-flex items-center gap-x-3'>
-                    {playingState.context?.href.replace(
-                      'https://api.spotify.com/v1/playlists/',
-                      ''
-                    ) === playlistId &&
-                    playingState.trackDetail?.id === track.id
-                      ? 'playing'
-                      : ''}
                     <Image
                       src={track.album.images[0]?.url ?? ''}
                       alt={track.album.images[0]?.url ?? ''}
