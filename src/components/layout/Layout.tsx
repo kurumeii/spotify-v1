@@ -24,7 +24,7 @@ const Layout: FC<Props> = ({ children }) => {
           <div className='sticky top-0 flex h-[10%] flex-1 items-center justify-end bg-transparent px-5'>
             <UserDropDown />
           </div>
-          {children}
+          <div className='flex h-[90%] flex-1 flex-col p-5'>{children}</div>
         </div>
       </div>
       <footer className='fixed bottom-0 z-30 h-[10%] w-full border-t border-t-zinc-800 bg-neutral-900 px-5 py-3 text-white '>

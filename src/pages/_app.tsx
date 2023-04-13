@@ -1,4 +1,5 @@
 import { THEME } from '@/hooks/useToggleTheme'
+import { myStore } from '@/store/store'
 import '@/styles/globals.css'
 import { api } from '@/utils/api'
 import { type NextPage } from 'next'
@@ -7,8 +8,8 @@ import { SessionProvider } from 'next-auth/react'
 import { ThemeProvider } from 'next-themes'
 import { type AppProps } from 'next/app'
 import Head from 'next/head'
-import { type ReactNode, type ReactElement } from 'react'
-
+import { type ReactElement, type ReactNode } from 'react'
+import { Provider as ReduxProvider } from 'react-redux'
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
 }
@@ -33,7 +34,9 @@ const MyApp = ({ Component, pageProps: { ...pageProps } }: MyAppProps) => {
         themes={[THEME.DARK, THEME.LIGHT]}
       >
         <SessionProvider session={pageProps.session as Session}>
-          {getLayout(<Component {...pageProps} />)}
+          <ReduxProvider store={myStore}>
+            {getLayout(<Component {...pageProps} />)}
+          </ReduxProvider>
         </SessionProvider>
       </ThemeProvider>
     </>

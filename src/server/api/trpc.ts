@@ -69,6 +69,7 @@ import getAccountDetail from '@/utils/getAccountDetail'
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
+import { spotifyApi } from '@/config/spotify'
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -116,6 +117,7 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
     ctx.prisma,
     ctx.session.user.id
   )
+  spotifyApi.setAccessToken(access_token)
   return next({
     ctx: {
       // infers the `session` as non-nullable

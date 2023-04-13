@@ -34,11 +34,9 @@ const Home: NextPageWithLayout = () => {
   const welcomeText = getDayNight() as string
   return (
     <>
-      <main className='no-scrollbar h-screen w-full overflow-y-auto px-8 pb-12 pt-36'>
-        <p className='text-4xl font-bold'>Good {welcomeText}</p>
-        <br />
-        <TopPlayedTracks />
-      </main>
+      <p className='text-4xl font-bold'>Good {welcomeText}</p>
+      <br />
+      <TopPlayedTracks />
     </>
   )
 }
