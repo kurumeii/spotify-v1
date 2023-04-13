@@ -13,8 +13,9 @@ const CurrentTrack = () => {
       // refetchInterval: 5 * 1000,
     }
   )
-  const playState = useSelector((state: RootState) => state.track.playState)
-  const trackUri = useSelector((state: RootState) => state.track.trackUri)
+  const { playState, trackUri, type } = useSelector(
+    (state: RootState) => state.track
+  )
 
   const dispatch = useDispatch()
   return (
@@ -27,7 +28,7 @@ const CurrentTrack = () => {
             togglePlayTrack({
               playState: isPlaying,
               trackPosition: progressMs,
-              trackUri: track.uri,
+              trackUri: type === 'track' ? track.uri : trackUri,
             })
           )
         }}

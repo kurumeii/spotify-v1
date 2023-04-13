@@ -8,6 +8,7 @@ import { type ReactElement } from 'react'
 import { type NextPageWithLayout } from './_app'
 
 import TopPlayedTracks from '@/components/TopPlayedTracks'
+import { api } from '@/utils/api'
 
 type Props = {
   session: Awaited<ReturnType<typeof getServerAuthSession>>
@@ -32,11 +33,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
 
 const Home: NextPageWithLayout = () => {
   const welcomeText = getDayNight() as string
+
   return (
     <>
       <p className='text-4xl font-bold'>Good {welcomeText}</p>
       <br />
       <TopPlayedTracks />
+      <div className='no-scrollbar overflow-y-auto'></div>
     </>
   )
 }

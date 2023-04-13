@@ -1,15 +1,17 @@
 import TableBody from '@/components/Playlists/TableBody'
 import TableHead from '@/components/Playlists/TableHead'
 import Layout from '@/components/layout/Layout'
-import useToggleTheme from '@/hooks/useToggleTheme'
 import { getServerAuthSession } from '@/server/auth'
+import { togglePlayTrack } from '@/slices/trackSlice'
+import { type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
-import { PlayIcon } from 'lucide-react'
+import { PauseIcon, PlayIcon } from 'lucide-react'
 import { type GetServerSideProps } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { type ReactElement } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { type NextPageWithLayout } from '../_app'
 
 type Props = {
@@ -36,17 +38,34 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
 const Playlist: NextPageWithLayout = () => {
   const router = useRouter()
   const playlistId = router.query.id as string
-  const { isDarkTheme } = useToggleTheme()
-  const { data: playlistData } = api.main.getDetailPlaylistById.useQuery({
-    playlistId,
-  })
+  const { data: playlistData } = api.main.getDetailPlaylistById.useQuery(
+    {
+      playlistId,
+    },
+    { refetchOnWindowFocus: false }
+  )
 
+  const { playState, trackUri, trackPosition } = useSelector(
+    (state: RootState) => state.track
+  )
+  const dispatch = useDispatch()
   if (!playlistData) return null
   return (
     <>
       <div className='flex items-center gap-3'>
         {playlistData.images.length > 0 && (
-          <div className='group relative'>
+          <div
+            className='group relative cursor-pointer'
+            onClick={() => {
+              dispatch(
+                togglePlayTrack({
+                  playState: !playState,
+                  trackUri: playlistData.uri,
+                  trackPosition,
+                })
+              )
+            }}
+          >
             <Image
               src={playlistData.images[0]?.url}
               alt={playlistData.name}
@@ -54,13 +73,12 @@ const Playlist: NextPageWithLayout = () => {
               height={200}
             />
             <div className='absolute top-0 hidden h-full w-full items-center justify-center bg-black/30 group-hover:flex'>
-              <button
-                className={cn(
-                  'btn-success btn-circle btn-lg btn',
-                  isDarkTheme && 'btn-outline '
+              <button className={cn('btn-success btn-circle btn-lg btn')}>
+                {playState && trackUri === playlistData.uri ? (
+                  <PauseIcon className='h-7 w-7 fill-current stroke-transparent' />
+                ) : (
+                  <PlayIcon className='h-7 w-7 fill-current stroke-transparent' />
                 )}
-              >
-                <PlayIcon className='h-7 w-7 fill-current stroke-transparent' />
               </button>
             </div>
           </div>

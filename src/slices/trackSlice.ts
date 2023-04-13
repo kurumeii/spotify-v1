@@ -4,12 +4,14 @@ export type TrackState = {
   trackUri: string
   playState: boolean
   trackPosition: number
+  type: 'playlist' | 'track'
 }
 
 const initState: TrackState = {
   trackUri: '',
   playState: false,
   trackPosition: 0,
+  type: 'track',
 }
 
 export const trackSlice = createSlice({
@@ -20,6 +22,7 @@ export const trackSlice = createSlice({
       state.playState = action.payload.playState
       state.trackPosition = action.payload.trackPosition
       state.trackUri = action.payload.trackUri
+      state.type = action.payload.type
     },
   },
 })

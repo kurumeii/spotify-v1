@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { spotifyApi } from '@/config/spotify'
-import { WebSpotifyPlayerName } from '@/constant'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
@@ -66,7 +65,7 @@ export const mainRouter = createTRPCRouter({
         {
           market: 'VN',
           fields:
-            'public, href, id, images, name, owner(display_name), tracks.total',
+            'uri, public, href, id, images, name, owner(display_name), tracks(total)',
         }
       )
       if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
@@ -103,6 +102,7 @@ export const mainRouter = createTRPCRouter({
     .input(
       z.object({
         playlistId: z.string().min(1),
+        offset: z.number().min(0).nullish(),
       })
     )
     .query(async ({ input }) => {
@@ -111,9 +111,9 @@ export const mainRouter = createTRPCRouter({
         {
           market: 'VN',
           limit: 10,
-          offset: 0,
+          offset: input.offset ?? 0,
           fields:
-            'offset,items(added_at, track(name, duration_ms, uri, album))',
+            'total, offset,items(added_at, track(name, duration_ms, uri, album))',
         }
       )
 
@@ -122,39 +122,7 @@ export const mainRouter = createTRPCRouter({
 
       return {
         ...tracksResponse.body,
+        pages: Math.ceil(tracksResponse.body.total / 10),
       }
-    }),
-  trackAction: protectedProcedure
-    .input(
-      z.object({
-        action: z.enum(['play', 'pause']),
-        trackUri: z.string().nullish(),
-        position: z.number().min(0).nullish(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      const { body: deviceResponse, statusCode } =
-        await spotifyApi.getMyDevices()
-      if (statusCode !== 200) return true
-      const webDevice = deviceResponse.devices.find(
-        device => device.name === WebSpotifyPlayerName.NAME
-      ) as SpotifyApi.UserDevice
-
-      switch (input.action) {
-        case 'play':
-          await spotifyApi.play({
-            uris: [input.trackUri],
-            device_id: webDevice.id,
-            position_ms: input.position || 0,
-          })
-          break
-        case 'pause':
-          await spotifyApi.pause()
-          break
-        default:
-          await spotifyApi.pause()
-          break
-      }
-      return true
     }),
 })

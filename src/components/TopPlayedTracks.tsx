@@ -45,6 +45,7 @@ const TopPlayedTracks: FC = () => {
                     playState: !playState,
                     trackUri: uri,
                     trackPosition,
+                    type: 'track',
                   })
                 )
               }}
