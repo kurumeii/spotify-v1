@@ -2,7 +2,6 @@ import { WebSpotifyPlayerName } from '@/constant'
 import { togglePlayTrack } from '@/slices/trackSlice'
 import { type RootState } from '@/store/store'
 import { api } from '@/utils/api'
-import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SpotifyPlayer, { type CallbackState } from 'react-spotify-web-playback'
 
@@ -18,21 +17,22 @@ const CurrentTrack = () => {
     }
   )
 
-  const updateTrackState = useCallback(
-    ({ progressMs, isPlaying, track }: CallbackState) => {
-      dispatch(
-        togglePlayTrack({
-          type,
-          playState: isPlaying,
-          trackProgress: progressMs,
-          trackUri: track.uri,
-          playlistUri: playlistUri,
-          trackOffset,
-        })
-      )
-    },
-    [dispatch, playlistUri, trackOffset, type]
-  )
+  const updateTrackState = ({
+    progressMs,
+    isPlaying,
+    track,
+  }: CallbackState) => {
+    dispatch(
+      togglePlayTrack({
+        type,
+        playState: isPlaying,
+        trackProgress: progressMs,
+        trackUri: track.uri,
+        playlistUri,
+        trackOffset,
+      })
+    )
+  }
 
   return (
     <SpotifyPlayer

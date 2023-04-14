@@ -14,7 +14,7 @@ const Login = () => {
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1 }}
-          className='card w-96 bg-base-200 shadow-md'
+          className='card w-96 '
         >
           <div className='card-body'>
             <div className='card-title justify-center'>

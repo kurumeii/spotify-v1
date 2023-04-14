@@ -45,7 +45,7 @@ const Playlist: NextPageWithLayout = () => {
     { refetchOnWindowFocus: false }
   )
 
-  const { playState, trackUri, trackProgress, playlistUri } = useSelector(
+  const { playState, trackProgress, playlistUri } = useSelector(
     (state: RootState) => state.track
   )
   const dispatch = useDispatch()

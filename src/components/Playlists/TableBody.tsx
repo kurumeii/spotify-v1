@@ -90,7 +90,7 @@ const TableBody: FC = () => {
                       width={50}
                       height={50}
                     />
-                    {track.name}
+                    <span className='w-full truncate'>{track.name}</span>
                   </div>
                 </td>
                 <td>{track.album.name}</td>
