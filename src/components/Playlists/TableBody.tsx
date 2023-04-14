@@ -1,10 +1,12 @@
 import { togglePlayTrack } from '@/slices/trackSlice'
-import { RootState } from '@/store/store'
+import { type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
   ChevronFirstIcon,
   ChevronLastIcon,
   PauseIcon,
@@ -47,7 +49,7 @@ const TableBody: FC = () => {
               <tr
                 key={idx}
                 className={cn(
-                  'hover group text-sm',
+                  'group hover text-sm',
                   playState && trackUri === track.uri
                     ? 'active text-green-500'
                     : !playState && trackUri === track.uri
@@ -102,36 +104,51 @@ const TableBody: FC = () => {
         <tr>
           <td colSpan={5}>
             <div className='flex items-center justify-center'>
-              <div className='btn-group'>
-                <button
-                  className={cn('btn', offset === 0 && 'btn-success')}
-                  onClick={() => setOffset(0)}
-                >
-                  <ChevronFirstIcon className='mx-2 h-6 w-6' />
-                  First
-                </button>
-                {offset !== 0 && <button className='btn'>Prev</button>}
-                <button className='btn'>...</button>
-                <button className='btn'>Next</button>
+              <div className='btn-group '>
+                {/* To very first page */}
                 <button
                   className={cn(
                     'btn',
-                    (offset + 10) / 10 === tracksObj.pages && 'btn-success'
+                    offset === 0 ? 'btn-success' : 'btn-ghost '
+                  )}
+                  onClick={() => setOffset(0)}
+                >
+                  <ChevronFirstIcon className='mx-2 ' />
+                  First
+                </button>
+                {/* If not the first page, previous page will fetch 10 previous items  */}
+                {offset !== 0 && (
+                  <button
+                    className='btn-ghost btn'
+                    title='Previous page'
+                    onClick={() => setOffset(prev => prev - 10)}
+                  >
+                    <ArrowLeftIcon />
+                  </button>
+                )}
+                {/* If not the last page, next page will fetch 10 next items  */}
+                {(offset + 10) / 10 !== tracksObj.pages && (
+                  <button
+                    className='btn-ghost btn'
+                    title='Next page'
+                    onClick={() => setOffset(prev => prev + 10)}
+                  >
+                    <ArrowRightIcon />
+                  </button>
+                )}
+                {/* To very last page */}
+                <button
+                  className={cn(
+                    'btn',
+                    (offset + 10) / 10 === tracksObj.pages
+                      ? 'btn-success'
+                      : 'btn-ghost '
                   )}
                   onClick={() => setOffset(tracksObj.pages * 10 - 10)}
                 >
-                  {/* {tracksObj.pages} */}
-                  <ChevronLastIcon className='mx-2 h-6 w-6' />
+                  <ChevronLastIcon className='mx-2 ' />
                   Last
                 </button>
-                {/* {[...Array<number>(tracksObj.pages).keys()].map((v, idx) => (
-                  <button
-                    key={idx}
-                    className={cn('btn', page + 1 === v + 1 && 'btn-active')}
-                  >
-                    Page {v + 1}
-                  </button>
-                ))} */}
               </div>
             </div>
           </td>
