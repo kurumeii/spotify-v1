@@ -1,17 +1,19 @@
+import { togglePlayTrack } from '@/slices/trackSlice'
+import { RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
   ChevronFirstIcon,
   ChevronLastIcon,
+  PauseIcon,
   PlayIcon,
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState, type FC } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 dayjs.extend(relativeTime)
 
@@ -29,7 +31,10 @@ const TableBody: FC = () => {
       refetchOnMount: false,
     }
   )
-
+  const { playState, trackUri, trackProgress } = useSelector(
+    (state: RootState) => state.track
+  )
+  const dispatch = useDispatch()
   if (!tracksObj) return null
 
   return (
@@ -39,10 +44,40 @@ const TableBody: FC = () => {
           tracksObj.items.map(({ track, added_at }, idx) => {
             if (!track) return null
             return (
-              <tr key={idx} className='group hover text-sm'>
+              <tr
+                key={idx}
+                className={cn(
+                  'hover group text-sm',
+                  playState && trackUri === track.uri
+                    ? 'active text-green-500'
+                    : !playState && trackUri === track.uri
+                    ? 'text-green-500'
+                    : ''
+                )}
+                onClick={() => {
+                  dispatch(
+                    togglePlayTrack({
+                      playState:
+                        trackUri === track.uri && playState ? false : true,
+                      trackProgress: track.uri === trackUri ? trackProgress : 0,
+                      type: 'playlist',
+                      playlistUri: `spotify:playlist:${playlistId}`,
+                      trackUri: track.uri,
+                      trackOffset: idx + offset,
+                    })
+                  )
+                  tracksObj.offset
+                }}
+              >
                 <td>
                   <div className='w-1'>
-                    <PlayIcon className='hidden h-4 w-4 fill-current stroke-transparent group-hover:block' />
+                    {playState && trackUri === track.uri ? (
+                      <PauseIcon className='h-4 w-4 fill-green-500 stroke-transparent' />
+                    ) : !playState && trackUri === track.uri ? (
+                      <PlayIcon className='h-4 w-4 fill-green-500 stroke-transparent' />
+                    ) : (
+                      <PlayIcon className='hidden h-4 w-4 fill-current stroke-transparent group-hover:block' />
+                    )}
                   </div>
                 </td>
                 <td>

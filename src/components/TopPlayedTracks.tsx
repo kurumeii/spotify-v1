@@ -17,7 +17,7 @@ const TopPlayedTracks: FC = () => {
     }
   )
 
-  const { playState, trackPosition, trackUri } = useSelector(
+  const { playState, trackProgress, trackUri } = useSelector(
     (state: RootState) => state.track
   )
   const dispatch = useDispatch()
@@ -44,7 +44,7 @@ const TopPlayedTracks: FC = () => {
                   togglePlayTrack({
                     playState: !playState,
                     trackUri: uri,
-                    trackPosition,
+                    trackProgress,
                     type: 'track',
                   })
                 )

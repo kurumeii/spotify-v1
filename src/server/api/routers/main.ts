@@ -41,12 +41,13 @@ export const mainRouter = createTRPCRouter({
         market: 'VN',
       })
       if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
-      const { is_playing, item, context } = spotifyResponse.body
+      const { is_playing, item, context, progress_ms } = spotifyResponse.body
       return {
         accessToken: access_token,
         is_playing: is_playing,
         trackDetail: item,
         context,
+        progress_ms,
       }
     } catch (error) {
       console.error(error)

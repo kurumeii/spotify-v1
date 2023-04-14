@@ -45,7 +45,7 @@ const Playlist: NextPageWithLayout = () => {
     { refetchOnWindowFocus: false }
   )
 
-  const { playState, trackUri, trackPosition } = useSelector(
+  const { playState, trackUri, trackProgress, playlistUri } = useSelector(
     (state: RootState) => state.track
   )
   const dispatch = useDispatch()
@@ -60,8 +60,9 @@ const Playlist: NextPageWithLayout = () => {
               dispatch(
                 togglePlayTrack({
                   playState: !playState,
-                  trackUri: playlistData.uri,
-                  trackPosition,
+                  type: 'playlist',
+                  playlistUri: playlistData.uri,
+                  trackProgress,
                 })
               )
             }}
@@ -74,7 +75,7 @@ const Playlist: NextPageWithLayout = () => {
             />
             <div className='absolute top-0 hidden h-full w-full items-center justify-center bg-black/30 group-hover:flex'>
               <button className={cn('btn-success btn-circle btn-lg btn')}>
-                {playState && trackUri === playlistData.uri ? (
+                {playState && playlistUri === playlistData.uri ? (
                   <PauseIcon className='h-7 w-7 fill-current stroke-transparent' />
                 ) : (
                   <PlayIcon className='h-7 w-7 fill-current stroke-transparent' />
