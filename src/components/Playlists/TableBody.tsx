@@ -49,7 +49,7 @@ const TableBody: FC = () => {
               <tr
                 key={idx}
                 className={cn(
-                  'group hover text-sm',
+                  'hover group text-sm',
                   playState && trackUri === track.uri
                     ? 'active text-green-500'
                     : !playState && trackUri === track.uri
@@ -126,6 +126,16 @@ const TableBody: FC = () => {
                     <ArrowLeftIcon />
                   </button>
                 )}
+                <select
+                  className='after: select-ghost select mx-2'
+                  onChange={e => setOffset((e.target.value as number) * 10)}
+                >
+                  {[...Array<number>(tracksObj.pages).keys()].map(v => (
+                    <option key={v} value={v} selected={v === offset / 10}>
+                      {v + 1}
+                    </option>
+                  ))}
+                </select>
                 {/* If not the last page, next page will fetch 10 next items  */}
                 {(offset + 10) / 10 !== tracksObj.pages && (
                   <button
