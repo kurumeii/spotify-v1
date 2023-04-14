@@ -1,14 +1,16 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 export type TopPlayedState = {
-  trackId: string | string[]
+  trackId: string[]
+}
+
+const initialState: TopPlayedState = {
+  trackId: [],
 }
 
 export const topPlayedSlice = createSlice({
   name: 'TopPlayed',
-  initialState: {
-    trackId: '',
-  },
+  initialState,
   reducers: {
     setTopPlayed: (
       state: TopPlayedState,
