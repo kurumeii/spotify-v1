@@ -68,8 +68,8 @@ const Playlist: NextPageWithLayout = () => {
             }}
           >
             <Image
-              src={playlistData.images[0]?.url}
-              alt={playlistData.name}
+              src={playlistData.images[0]?.url ?? ''}
+              alt={playlistData.name ?? ''}
               width={200}
               height={200}
             />

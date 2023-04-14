@@ -53,8 +53,8 @@ const TopPlayedTracks: FC = () => {
               {album.images.length > 0 && (
                 <div className='group relative inline-flex h-full w-full cursor-pointer items-center gap-x-5 text-sm'>
                   <Image
-                    src={album.images[0]?.url}
-                    alt={album.images[0]?.url}
+                    src={album.images[0]?.url || ''}
+                    alt={album.images[0]?.url || ''}
                     width={100}
                     height={100}
                   />

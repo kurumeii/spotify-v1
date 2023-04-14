@@ -37,7 +37,7 @@ const CurrentTrack = () => {
   return (
     <SpotifyPlayer
       token={currentTrackData?.accessToken ?? ''}
-      uris={type === 'playlist' ? playlistUri : trackUri}
+      uris={type === 'playlist' ? playlistUri || '' : trackUri || ''}
       callback={updateTrackState}
       magnifySliderOnHover
       name={WebSpotifyPlayerName.NAME}

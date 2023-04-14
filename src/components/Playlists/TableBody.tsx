@@ -128,7 +128,7 @@ const TableBody: FC = () => {
                 )}
                 <select
                   className='after: select-ghost select mx-2'
-                  onChange={e => setOffset((e.target.value as number) * 10)}
+                  onChange={e => setOffset(Number(e.target.value) * 10)}
                 >
                   {[...Array<number>(tracksObj.pages).keys()].map(v => (
                     <option key={v} value={v} selected={v === offset / 10}>

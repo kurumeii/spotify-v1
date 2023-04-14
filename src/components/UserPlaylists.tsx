@@ -14,7 +14,7 @@ const UserPlaylists = () => {
     refetchIntervalInBackground: true,
   })
 
-  if (isError || !userPlaylistData) return false
+  if (isError || !userPlaylistData) return null
   return (
     <>
       {isLoading ?? (
