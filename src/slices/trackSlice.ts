@@ -9,18 +9,16 @@ export type TrackState = {
   type: 'playlist' | 'track'
 }
 
-const initState: TrackState = {
-  trackUri: '',
-  playlistUri: '',
-  playState: false,
-  trackProgress: 0,
-  trackOffset: 0,
-  type: 'track',
-}
-
 export const trackSlice = createSlice({
   name: 'Track',
-  initialState: initState,
+  initialState: {
+    trackUri: '',
+    playlistUri: '',
+    playState: false,
+    trackProgress: 0,
+    trackOffset: 0,
+    type: 'track',
+  },
   reducers: {
     togglePlayTrack: (state, action: PayloadAction<TrackState>) => {
       state.playState = action.payload.playState

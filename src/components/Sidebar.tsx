@@ -42,6 +42,7 @@ const coreFunctionBtn: Array<SidebarProps> = [
   {
     Icon: SearchIcon,
     label: 'search',
+    link: '/search',
   },
   {
     Icon: LibraryIcon,

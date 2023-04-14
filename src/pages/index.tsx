@@ -7,8 +7,8 @@ import { type GetServerSideProps } from 'next'
 import { type ReactElement } from 'react'
 import { type NextPageWithLayout } from './_app'
 
-import TopPlayedTracks from '@/components/TopPlayedTracks'
-import { api } from '@/utils/api'
+import RecommenedTracks from '@/components/Main/RecommenedTracks'
+import TopPlayedTracks from '@/components/Main/TopPlayedTracks'
 
 type Props = {
   session: Awaited<ReturnType<typeof getServerAuthSession>>
@@ -36,10 +36,12 @@ const Home: NextPageWithLayout = () => {
 
   return (
     <>
-      <p className='text-4xl font-bold'>Good {welcomeText}</p>
-      <br />
-      <TopPlayedTracks />
-      <div className='no-scrollbar overflow-y-auto'></div>
+      <div className='no-scrollbar flex flex-col gap-y-5 overflow-y-auto'>
+        <p className='text-4xl font-bold'>Good {welcomeText}</p>
+        <br />
+        <TopPlayedTracks />
+        <RecommenedTracks />
+      </div>
     </>
   )
 }

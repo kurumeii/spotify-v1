@@ -13,7 +13,7 @@ const CurrentTrack = () => {
   const { data: currentTrackData } = api.main.getUserCurrentlyPlaying.useQuery(
     undefined,
     {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
     }
   )
 

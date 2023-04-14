@@ -8,7 +8,6 @@ export const mainRouter = createTRPCRouter({
   getUserPlaylists: protectedProcedure.query(async ({ ctx }) => {
     try {
       const { providerAccountId } = ctx.session.spotify
-
       const { body: spotifyResponse } = await spotifyApi.getUserPlaylists(
         providerAccountId,
         {
@@ -36,7 +35,6 @@ export const mainRouter = createTRPCRouter({
   getUserCurrentlyPlaying: protectedProcedure.query(async ({ ctx }) => {
     try {
       const { access_token } = ctx.session.spotify
-
       const spotifyResponse = await spotifyApi.getMyCurrentPlayingTrack({
         market: 'VN',
       })
@@ -86,7 +84,7 @@ export const mainRouter = createTRPCRouter({
       ...body,
     }
   }),
-  getMyTopTracks: protectedProcedure.query(async ({ ctx }) => {
+  getMyTopTracks: protectedProcedure.query(async () => {
     const { body, statusCode } = await spotifyApi.getMyTopTracks({
       limit: 6,
       time_range: 'short_term',
@@ -96,7 +94,6 @@ export const mainRouter = createTRPCRouter({
     }
     return {
       ...body,
-      accessToken: ctx.session.spotify.access_token,
     }
   }),
   getTracksFromPlaylist: protectedProcedure
@@ -124,6 +121,26 @@ export const mainRouter = createTRPCRouter({
       return {
         ...tracksResponse.body,
         pages: Math.ceil(tracksResponse.body.total / 10),
+      }
+    }),
+  getRecommened: protectedProcedure
+    .input(
+      z.object({
+        topTracks: z.string().array().min(1).max(5),
+      })
+    )
+    .query(async ({ input }) => {
+      const { body: recommenedBody, statusCode } =
+        await spotifyApi.getRecommendations({
+          limit: 12,
+          market: 'VN',
+          seed_tracks: input.topTracks,
+          min_popularity: 50,
+        })
+      if (statusCode !== 200) throw new TRPCError({ code: 'BAD_REQUEST' })
+      const { tracks } = recommenedBody
+      return {
+        tracks,
       }
     }),
 })
