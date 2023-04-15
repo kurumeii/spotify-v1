@@ -1,5 +1,5 @@
 import { togglePlayTrack } from '@/slices/trackSlice'
-import { type RootState } from '@/store/store'
+import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import dayjs from 'dayjs'
@@ -15,28 +15,29 @@ import {
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState, type FC } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 dayjs.extend(relativeTime)
 
 const TableBody: FC = () => {
   const router = useRouter()
   const playlistId = router.query.id as string
-  const [offset, setOffset] = useState(0)
+  const [page, setPage] = useState(1)
   const { data: tracksObj } = api.main.getTracksFromPlaylist.useQuery(
     {
       playlistId,
-      offset,
+      page,
     },
     {
       refetchOnWindowFocus: false,
-      refetchOnMount: false,
+      keepPreviousData: true,
+      staleTime: 30 * 1000,
     }
   )
   const { playState, trackUri, trackProgress } = useSelector(
     (state: RootState) => state.track
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   if (!tracksObj) return null
 
   return (
@@ -49,7 +50,7 @@ const TableBody: FC = () => {
               <tr
                 key={idx}
                 className={cn(
-                  'hover group text-sm',
+                  'group hover text-sm',
                   playState && trackUri === track.uri
                     ? 'active text-green-500'
                     : !playState && trackUri === track.uri
@@ -65,10 +66,10 @@ const TableBody: FC = () => {
                       type: 'playlist',
                       playlistUri: `spotify:playlist:${playlistId}`,
                       trackUri: track.uri,
-                      trackOffset: idx + offset,
+                      trackOffset: idx + page * 10 - 10,
                     })
                   )
-                  tracksObj.offset
+                  // tracksObj.offset
                 }}
               >
                 <td>
@@ -109,39 +110,40 @@ const TableBody: FC = () => {
                 <button
                   className={cn(
                     'btn',
-                    offset === 0 ? 'btn-success' : 'btn-ghost '
+                    page === 1 ? 'btn-success' : 'btn-ghost '
                   )}
-                  onClick={() => setOffset(0)}
+                  onClick={() => setPage(1)}
                 >
                   <ChevronFirstIcon className='mx-2 ' />
                   First
                 </button>
                 {/* If not the first page, previous page will fetch 10 previous items  */}
-                {offset !== 0 && (
+                {page !== 1 && (
                   <button
                     className='btn-ghost btn'
                     title='Previous page'
-                    onClick={() => setOffset(prev => prev - 10)}
+                    onClick={() => setPage(prev => prev - 1)}
                   >
                     <ArrowLeftIcon />
                   </button>
                 )}
                 <select
-                  className='after: select-ghost select mx-2'
-                  onChange={e => setOffset(Number(e.target.value) * 10)}
+                  className='select-ghost select mx-2'
+                  value={page}
+                  onChange={e => setPage(Number(e.target.value))}
                 >
-                  {[...Array<number>(tracksObj.pages).keys()].map(v => (
-                    <option key={v} value={v} selected={v === offset / 10}>
+                  {[...Array(tracksObj.pages).keys()].map(v => (
+                    <option key={v} value={v + 1}>
                       {v + 1}
                     </option>
                   ))}
                 </select>
                 {/* If not the last page, next page will fetch 10 next items  */}
-                {(offset + 10) / 10 !== tracksObj.pages && (
+                {page !== tracksObj.pages && (
                   <button
                     className='btn-ghost btn'
                     title='Next page'
-                    onClick={() => setOffset(prev => prev + 10)}
+                    onClick={() => setPage(prev => prev + 1)}
                   >
                     <ArrowRightIcon />
                   </button>
@@ -150,11 +152,9 @@ const TableBody: FC = () => {
                 <button
                   className={cn(
                     'btn',
-                    (offset + 10) / 10 === tracksObj.pages
-                      ? 'btn-success'
-                      : 'btn-ghost '
+                    page === tracksObj.pages ? 'btn-success' : 'btn-ghost '
                   )}
-                  onClick={() => setOffset(tracksObj.pages * 10 - 10)}
+                  onClick={() => setPage(tracksObj.pages)}
                 >
                   <ChevronLastIcon className='mx-2 ' />
                   Last

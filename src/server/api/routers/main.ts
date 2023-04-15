@@ -126,18 +126,16 @@ export const mainRouter = createTRPCRouter({
           {
             market: 'VN',
             limit: 10,
-            offset: Math.max(
-              playlistResponse.tracks.total - 10 * input.page,
-              0
+            offset: Math.min(
+              10 * input.page - 10,
+              playlistResponse.tracks.total
             ),
             fields:
               'total,offset,items(added_at, track(name, duration_ms, uri, album))',
           }
         )
-        const revertedItems = tracksResponse.body.items.reverse()
         return {
           ...tracksResponse.body,
-          items: revertedItems,
           pages: Math.ceil(tracksResponse.body.total / 10),
         }
       } catch (error) {
