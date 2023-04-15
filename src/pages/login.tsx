@@ -1,7 +1,30 @@
+import { getServerAuthSession } from '@/server/auth'
 import { motion } from 'framer-motion'
+import { type GetServerSideProps } from 'next'
 import { signIn } from 'next-auth/react'
 import Head from 'next/head'
 import Image from 'next/image'
+
+type Props = {
+  session: Awaited<ReturnType<typeof getServerAuthSession>>
+}
+
+export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
+  const session = await getServerAuthSession(ctx)
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: true,
+      },
+    }
+  }
+  return {
+    props: {
+      session,
+    },
+  }
+}
 
 const Login = () => {
   return (

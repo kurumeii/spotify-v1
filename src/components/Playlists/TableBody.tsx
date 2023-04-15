@@ -4,166 +4,135 @@ import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ChevronFirstIcon,
-  ChevronLastIcon,
-  PauseIcon,
-  PlayIcon,
-} from 'lucide-react'
+import { PauseIcon, PlayIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState, type FC } from 'react'
+import { type FC } from 'react'
 import { useSelector } from 'react-redux'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from '../ui/ContextMenu'
 
 dayjs.extend(relativeTime)
 
-const TableBody: FC = () => {
+type Props = {
+  page: number
+  trackObjItems: SpotifyApi.PlaylistTrackObject[]
+}
+
+const TableBody: FC<Props> = ({ page, trackObjItems }) => {
   const router = useRouter()
   const playlistId = router.query.id as string
-  const [page, setPage] = useState(1)
-  const { data: tracksObj } = api.main.getTracksFromPlaylist.useQuery(
-    {
-      playlistId,
-      page,
-    },
-    {
-      refetchOnWindowFocus: false,
-      keepPreviousData: true,
-      staleTime: 30 * 1000,
-    }
-  )
+  const dispatch = useAppDispatch()
+
+  const {
+    playlistObj: { basicInfo },
+  } = useSelector((state: RootState) => state.savedPlaylist)
+
   const { playState, trackUri, trackProgress } = useSelector(
     (state: RootState) => state.track
   )
-  const dispatch = useAppDispatch()
-  if (!tracksObj) return null
+
+  const removeTrack = api.main.removeTrackFromPlaylist.useMutation()
 
   return (
     <>
       <tbody>
-        {tracksObj.items.length > 0 &&
-          tracksObj.items.map(({ track, added_at }, idx) => {
-            if (!track) return null
-            return (
-              <tr
-                key={idx}
-                className={cn(
-                  'group hover text-sm',
-                  playState && trackUri === track.uri
-                    ? 'active text-green-500'
-                    : !playState && trackUri === track.uri
-                    ? 'text-green-500'
-                    : ''
-                )}
-                onClick={() => {
-                  dispatch(
-                    togglePlayTrack({
-                      playState:
-                        trackUri === track.uri && playState ? false : true,
-                      trackProgress: track.uri === trackUri ? trackProgress : 0,
-                      type: 'playlist',
-                      playlistUri: `spotify:playlist:${playlistId}`,
+        {trackObjItems.map(({ track, added_at }, idx) => {
+          if (!track) return null
+          return (
+            <ContextMenu key={idx}>
+              <ContextMenuTrigger asChild>
+                <tr
+                  className={cn(
+                    'hover group text-sm',
+                    playState && trackUri === track.uri
+                      ? 'active text-green-500'
+                      : !playState && trackUri === track.uri
+                      ? 'text-green-500'
+                      : ''
+                  )}
+                  onClick={() => {
+                    dispatch(
+                      togglePlayTrack({
+                        playState:
+                          trackUri === track.uri && playState ? false : true,
+                        trackProgress:
+                          track.uri === trackUri ? trackProgress : 0,
+                        type: 'playlist',
+                        playlistUri: `spotify:playlist:${playlistId}`,
+                        trackUri: track.uri,
+                        trackOffset: idx + page * 10 - 10,
+                      })
+                    )
+                    // tracksObj.offset
+                  }}
+                >
+                  <td>
+                    <div className='w-1'>
+                      {playState && trackUri === track.uri ? (
+                        <PauseIcon className='h-4 w-4 fill-green-500 stroke-transparent' />
+                      ) : !playState && trackUri === track.uri ? (
+                        <PlayIcon className='h-4 w-4 fill-green-500 stroke-transparent' />
+                      ) : (
+                        <PlayIcon className='hidden h-4 w-4 fill-current stroke-transparent group-hover:block' />
+                      )}
+                    </div>
+                  </td>
+                  <td>
+                    <div className='inline-flex items-center gap-x-3'>
+                      <Image
+                        src={track.album.images[0]?.url ?? ''}
+                        alt={track.album.images[0]?.url ?? ''}
+                        width={50}
+                        height={50}
+                      />
+                      <span className='w-full truncate'>{track.name}</span>
+                    </div>
+                  </td>
+                  <td>{track.album.name}</td>
+                  <td>{added_at && dayjs(added_at).fromNow()}</td>
+                  <td>{dayjs(track.duration_ms).format('mm:ss')}</td>
+                </tr>
+              </ContextMenuTrigger>
+              <ContextMenuContent className='w-64'>
+                <ContextMenuItem
+                  inset
+                  onClick={() =>
+                    removeTrack.mutate({
+                      playlistId: playlistId,
                       trackUri: track.uri,
-                      trackOffset: idx + page * 10 - 10,
                     })
-                  )
-                  // tracksObj.offset
-                }}
-              >
-                <td>
-                  <div className='w-1'>
-                    {playState && trackUri === track.uri ? (
-                      <PauseIcon className='h-4 w-4 fill-green-500 stroke-transparent' />
-                    ) : !playState && trackUri === track.uri ? (
-                      <PlayIcon className='h-4 w-4 fill-green-500 stroke-transparent' />
-                    ) : (
-                      <PlayIcon className='hidden h-4 w-4 fill-current stroke-transparent group-hover:block' />
-                    )}
-                  </div>
-                </td>
-                <td>
-                  <div className='inline-flex items-center gap-x-3'>
-                    <Image
-                      src={track.album.images[0]?.url ?? ''}
-                      alt={track.album.images[0]?.url ?? ''}
-                      width={50}
-                      height={50}
-                    />
-                    <span className='w-full truncate'>{track.name}</span>
-                  </div>
-                </td>
-                <td>{track.album.name}</td>
-                <td>{added_at && dayjs(added_at).fromNow()}</td>
-                <td>{dayjs(track.duration_ms).format('mm:ss')}</td>
-              </tr>
-            )
-          })}
+                  }
+                >
+                  Remove from playlist
+                </ContextMenuItem>
+                <ContextMenuSub>
+                  <ContextMenuSubTrigger inset>
+                    Add to playlist
+                  </ContextMenuSubTrigger>
+                  <ContextMenuSubContent className='no-scrollbar h-64 overflow-y-auto'>
+                    {basicInfo.map(info => (
+                      <ContextMenuItem
+                        key={info.id}
+                        onClick={() => console.log(info.id)}
+                      >
+                        {info.name}
+                      </ContextMenuItem>
+                    ))}
+                  </ContextMenuSubContent>
+                </ContextMenuSub>
+              </ContextMenuContent>
+            </ContextMenu>
+          )
+        })}
       </tbody>
-      <tfoot>
-        <tr>
-          <td colSpan={5}>
-            <div className='flex items-center justify-center'>
-              <div className='btn-group '>
-                {/* To very first page */}
-                <button
-                  className={cn(
-                    'btn',
-                    page === 1 ? 'btn-success' : 'btn-ghost '
-                  )}
-                  onClick={() => setPage(1)}
-                >
-                  <ChevronFirstIcon className='mx-2 ' />
-                  First
-                </button>
-                {/* If not the first page, previous page will fetch 10 previous items  */}
-                {page !== 1 && (
-                  <button
-                    className='btn-ghost btn'
-                    title='Previous page'
-                    onClick={() => setPage(prev => prev - 1)}
-                  >
-                    <ArrowLeftIcon />
-                  </button>
-                )}
-                <select
-                  className='select-ghost select mx-2'
-                  value={page}
-                  onChange={e => setPage(Number(e.target.value))}
-                >
-                  {[...Array(tracksObj.pages).keys()].map(v => (
-                    <option key={v} value={v + 1}>
-                      {v + 1}
-                    </option>
-                  ))}
-                </select>
-                {/* If not the last page, next page will fetch 10 next items  */}
-                {page !== tracksObj.pages && (
-                  <button
-                    className='btn-ghost btn'
-                    title='Next page'
-                    onClick={() => setPage(prev => prev + 1)}
-                  >
-                    <ArrowRightIcon />
-                  </button>
-                )}
-                {/* To very last page */}
-                <button
-                  className={cn(
-                    'btn',
-                    page === tracksObj.pages ? 'btn-success' : 'btn-ghost '
-                  )}
-                  onClick={() => setPage(tracksObj.pages)}
-                >
-                  <ChevronLastIcon className='mx-2 ' />
-                  Last
-                </button>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </tfoot>
     </>
   )
 }

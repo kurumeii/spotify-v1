@@ -10,9 +10,10 @@ import { PauseIcon, PlayIcon } from 'lucide-react'
 import { type GetServerSideProps } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { type ReactElement } from 'react'
+import { useState, type ReactElement } from 'react'
 import { useSelector } from 'react-redux'
 import { type NextPageWithLayout } from '../_app'
+import TableFooter from '@/components/Playlists/TableFooter'
 
 type Props = {
   session: Awaited<ReturnType<typeof getServerAuthSession>>
@@ -38,6 +39,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
 const Playlist: NextPageWithLayout = () => {
   const router = useRouter()
   const playlistId = router.query.id as string
+  const [page, setPage] = useState(1)
+
+  const { playState, trackProgress, playlistUri } = useSelector(
+    (state: RootState) => state.track
+  )
+  const dispatch = useAppDispatch()
   const { data: playlistData } = api.main.getDetailPlaylistById.useQuery(
     {
       playlistId,
@@ -45,11 +52,19 @@ const Playlist: NextPageWithLayout = () => {
     { refetchOnWindowFocus: false }
   )
 
-  const { playState, trackProgress, playlistUri } = useSelector(
-    (state: RootState) => state.track
+  const { data: tracksObj } = api.main.getTracksFromPlaylist.useQuery(
+    {
+      playlistId,
+      page,
+    },
+    {
+      refetchOnWindowFocus: false,
+      keepPreviousData: true,
+      staleTime: 30 * 1000,
+    }
   )
-  const dispatch = useAppDispatch()
-  if (!playlistData) return null
+
+  if (!playlistData || !tracksObj) return null
   return (
     <>
       <div className='flex items-center gap-3'>
@@ -90,11 +105,9 @@ const Playlist: NextPageWithLayout = () => {
           </span>
           <h1 className='font-sans text-6xl font-black'>{playlistData.name}</h1>
           <div className=' flex flex-col gap-y-2 text-sm'>
-            {playlistData.description !== null && (
-              <span className='text-xs opacity-75'>
-                {playlistData.description}
-              </span>
-            )}
+            <span className='text-xs opacity-75'>
+              {playlistData.description ?? ''}
+            </span>
             {playlistData.owner.display_name} - {playlistData.tracks.total}{' '}
             songs
           </div>
@@ -103,7 +116,12 @@ const Playlist: NextPageWithLayout = () => {
       <div className='no-scrollbar flex h-1/2 flex-1 overflow-y-auto '>
         <table className='table w-full '>
           <TableHead />
-          <TableBody />
+          <TableBody page={page} trackObjItems={tracksObj.items} />
+          <TableFooter
+            page={page}
+            setPage={setPage}
+            totalPages={tracksObj.pages}
+          />
         </table>
       </div>
     </>

@@ -65,7 +65,7 @@ export const mainRouter = createTRPCRouter({
           {
             market: 'VN',
             fields:
-              'uri, public, href, id, images, name, owner(display_name), tracks(total)',
+              'uri, public, href, id, images, name, owner(display_name), tracks(total), description',
           }
         )
 
@@ -166,6 +166,27 @@ export const mainRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
     }),
+  addNewPlaylist: protectedProcedure
+    .input(
+      z.object({
+        playlistName: z.string().optional().default('My playlist'),
+        description: z.string().optional().default('My newly created playlist'),
+        isPublic: z.boolean().default(true),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { isPublic, playlistName, description } = input
+      const { body: spotifyResponse } = await spotifyApi.createPlaylist(
+        playlistName.trim(),
+        {
+          description: description.trim(),
+          public: isPublic,
+        }
+      )
+      return {
+        ...spotifyResponse,
+      }
+    }),
   addTrackToPlaylist: protectedProcedure
     .input(
       z.object({
@@ -182,6 +203,25 @@ export const mainRouter = createTRPCRouter({
         )
         return {
           ...spotifyResponse,
+        }
+      } catch (error) {
+        console.error(error)
+        throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
+    }),
+  removeTrackFromPlaylist: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.string().min(1),
+        trackUri: z.string().array().min(1),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const { playlistId, trackUri } = input
+        await spotifyApi.removeTracksFromPlaylist(playlistId, trackUri)
+        return {
+          data: 'OK',
         }
       } catch (error) {
         console.error(error)

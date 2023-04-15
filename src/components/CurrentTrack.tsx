@@ -1,4 +1,4 @@
-import { WebSpotifyPlayerName } from '@/constant'
+import { WebSpotifyPlayerName } from '@/constant/constants'
 import { togglePlayTrack } from '@/slices/trackSlice'
 import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
@@ -14,8 +14,7 @@ const CurrentTrack = () => {
     undefined,
     {
       refetchOnWindowFocus: true,
-      refetchInterval: 60 * 1000,
-      staleTime: 20 * 1000,
+      refetchInterval: 20 * 1000,
     }
   )
 

@@ -34,6 +34,7 @@ const RecommenedTracks = () => {
     { topTracks: trackId },
     {
       refetchOnWindowFocus: false,
+      staleTime: Infinity,
     }
   )
 
@@ -88,7 +89,6 @@ const RecommenedTracks = () => {
                         width={100}
                         height={100}
                       />
-
                       <div className='truncate'>
                         <span>{name}</span>
                         <br />
@@ -109,11 +109,12 @@ const RecommenedTracks = () => {
                   )}
                 </div>
               </ContextMenuTrigger>
-              <ContextMenuContent className='w-40 min-w-full'>
-                <ContextMenuItem>Go to artist</ContextMenuItem>
+              <ContextMenuContent className='w-64'>
                 <ContextMenuSub>
-                  <ContextMenuSubTrigger>Add to playlist</ContextMenuSubTrigger>
-                  <ContextMenuSubContent className='w-40 min-w-max'>
+                  <ContextMenuSubTrigger inset>
+                    Add to playlist
+                  </ContextMenuSubTrigger>
+                  <ContextMenuSubContent className='no-scrollbar h-64 overflow-y-auto'>
                     {basicInfo.map(info => (
                       <ContextMenuItem
                         key={info.id}
