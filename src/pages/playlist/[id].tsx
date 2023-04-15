@@ -3,7 +3,7 @@ import TableHead from '@/components/Playlists/TableHead'
 import Layout from '@/components/layout/Layout'
 import { getServerAuthSession } from '@/server/auth'
 import { togglePlayTrack } from '@/slices/trackSlice'
-import { type RootState } from '@/store/store'
+import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import { PauseIcon, PlayIcon } from 'lucide-react'
@@ -11,7 +11,7 @@ import { type GetServerSideProps } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { type ReactElement } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { type NextPageWithLayout } from '../_app'
 
 type Props = {
@@ -48,7 +48,7 @@ const Playlist: NextPageWithLayout = () => {
   const { playState, trackProgress, playlistUri } = useSelector(
     (state: RootState) => state.track
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   if (!playlistData) return null
   return (
     <>

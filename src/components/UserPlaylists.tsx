@@ -1,17 +1,32 @@
+import { setSavedPlaylist } from '@/slices/savedPlaylisSlice'
+import { useAppDispatch } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import { HeadphonesIcon, Loader2Icon } from 'lucide-react'
 import Link from 'next/link'
 
 const UserPlaylists = () => {
+  // const { playlistId } = useSelector((state: RootState) => state.savedPlaylist)
+  const dispatch = useAppDispatch()
   const {
     data: userPlaylistData,
     isLoading,
     isError,
   } = api.main.getUserPlaylists.useQuery(undefined, {
     refetchOnWindowFocus: false,
-    refetchInterval: 10 * 1000,
-    refetchIntervalInBackground: true,
+    refetchInterval: 20 * 1000,
+    onSuccess: data => {
+      dispatch(
+        setSavedPlaylist({
+          playlistObj: {
+            basicInfo: data.spotifyResponse.items.map(item => ({
+              id: item.id,
+              name: item.name,
+            })),
+          },
+        })
+      )
+    },
   })
 
   if (isError || !userPlaylistData) return null

@@ -1,12 +1,12 @@
 import { WebSpotifyPlayerName } from '@/constant'
 import { togglePlayTrack } from '@/slices/trackSlice'
-import { type RootState } from '@/store/store'
+import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import SpotifyPlayer, { type CallbackState } from 'react-spotify-web-playback'
 
 const CurrentTrack = () => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { playState, trackUri, playlistUri, type, trackOffset } = useSelector(
     (state: RootState) => state.track
   )
@@ -14,6 +14,8 @@ const CurrentTrack = () => {
     undefined,
     {
       refetchOnWindowFocus: true,
+      refetchInterval: 60 * 1000,
+      staleTime: 20 * 1000,
     }
   )
 

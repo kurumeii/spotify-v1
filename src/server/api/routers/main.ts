@@ -59,88 +59,135 @@ export const mainRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const { body: spotifyResponse } = await spotifyApi.getPlaylist(
-        input.playlistId,
-        {
-          market: 'VN',
-          fields:
-            'uri, public, href, id, images, name, owner(display_name), tracks(total)',
-        }
-      )
-      if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
+      try {
+        const { body: spotifyResponse } = await spotifyApi.getPlaylist(
+          input.playlistId,
+          {
+            market: 'VN',
+            fields:
+              'uri, public, href, id, images, name, owner(display_name), tracks(total)',
+          }
+        )
 
-      return {
-        ...spotifyResponse,
+        return {
+          ...spotifyResponse,
+        }
+      } catch (error) {
+        console.error(error)
+        throw new TRPCError({ code: 'BAD_REQUEST' })
       }
     }),
   getUserProfileDetail: protectedProcedure.query(async ({ ctx }) => {
     const { providerAccountId } = ctx.session.spotify
-
-    const { body, statusCode } = await spotifyApi.getUser(providerAccountId)
-    if (statusCode !== 200 || !body) {
-      throw new TRPCError({ code: 'NOT_FOUND' })
-    }
-    return {
-      ...body,
+    try {
+      const { body } = await spotifyApi.getUser(providerAccountId)
+      return {
+        ...body,
+      }
+    } catch (error) {
+      console.error(error)
+      throw new TRPCError({ code: 'BAD_REQUEST' })
     }
   }),
   getMyTopTracks: protectedProcedure.query(async () => {
-    const { body, statusCode } = await spotifyApi.getMyTopTracks({
-      limit: 6,
-      time_range: 'short_term',
-    })
-    if (statusCode !== 200) {
-      throw new TRPCError({ code: 'NOT_FOUND' })
-    }
-    return {
-      ...body,
+    try {
+      const { body } = await spotifyApi.getMyTopTracks({
+        limit: 6,
+        time_range: 'short_term',
+      })
+
+      return {
+        ...body,
+      }
+    } catch (error) {
+      console.error(error)
+      throw new TRPCError({ code: 'BAD_REQUEST' })
     }
   }),
   getTracksFromPlaylist: protectedProcedure
     .input(
       z.object({
         playlistId: z.string().min(1),
-        offset: z.number().min(0).nullish(),
+        page: z.number(),
       })
     )
     .query(async ({ input }) => {
-      const tracksResponse = await spotifyApi.getPlaylistTracks(
-        input.playlistId,
-        {
-          market: 'VN',
-          limit: 10,
-          offset: input.offset ?? 0,
-          fields:
-            'total, offset,items(added_at, track(name, duration_ms, uri, album))',
+      try {
+        const { body: playlistResponse } = await spotifyApi.getPlaylist(
+          input.playlistId,
+          {
+            market: 'VN',
+            fields: 'tracks.total',
+          }
+        )
+
+        const tracksResponse = await spotifyApi.getPlaylistTracks(
+          input.playlistId,
+          {
+            market: 'VN',
+            limit: 10,
+            offset: Math.max(
+              playlistResponse.tracks.total - 10 * input.page,
+              0
+            ),
+            fields:
+              'total,offset,items(added_at, track(name, duration_ms, uri, album))',
+          }
+        )
+        const revertedItems = tracksResponse.body.items.reverse()
+        return {
+          ...tracksResponse.body,
+          items: revertedItems,
+          pages: Math.ceil(tracksResponse.body.total / 10),
         }
-      )
-
-      if (tracksResponse.statusCode !== 200)
-        throw new TRPCError({ code: 'NOT_FOUND' })
-
-      return {
-        ...tracksResponse.body,
-        pages: Math.ceil(tracksResponse.body.total / 10),
+      } catch (error) {
+        console.error(error)
+        throw new TRPCError({ code: 'BAD_REQUEST' })
       }
     }),
   getRecommened: protectedProcedure
     .input(
       z.object({
-        topTracks: z.string().array().min(1).max(5),
+        topTracks: z.string().array().max(5),
       })
     )
     .query(async ({ input }) => {
-      const { body: recommenedBody, statusCode } =
-        await spotifyApi.getRecommendations({
+      try {
+        const { body: recommenedBody } = await spotifyApi.getRecommendations({
           limit: 12,
           market: 'VN',
           seed_tracks: input.topTracks,
           min_popularity: 50,
         })
-      if (statusCode !== 200) throw new TRPCError({ code: 'BAD_REQUEST' })
-      const { tracks } = recommenedBody
-      return {
-        tracks,
+        const { tracks } = recommenedBody
+        return {
+          tracks,
+        }
+      } catch (error) {
+        console.error(error)
+        throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
+    }),
+  addTrackToPlaylist: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.string().min(1),
+        trackUri: z.string().array().min(1),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const { playlistId, trackUri } = input
+        const { body: spotifyResponse } = await spotifyApi.addTracksToPlaylist(
+          playlistId,
+          trackUri
+        )
+        return {
+          ...spotifyResponse,
+        }
+      } catch (error) {
+        console.error(error)
+        throw new TRPCError({ code: 'BAD_REQUEST' })
       }
     }),
 })
