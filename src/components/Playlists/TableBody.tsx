@@ -51,7 +51,7 @@ const TableBody: FC<Props> = ({ page, trackObjItems }) => {
               <ContextMenuTrigger asChild>
                 <tr
                   className={cn(
-                    'hover group text-sm',
+                    'group hover text-sm',
                     playState && trackUri === track.uri
                       ? 'active text-green-500'
                       : !playState && trackUri === track.uri

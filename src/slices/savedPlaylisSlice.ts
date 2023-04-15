@@ -3,7 +3,7 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 export type PlaylistState = {
   playlistObj: {
     basicInfo: Array<{ id: string; name: string; isPlaying: boolean }>
-    tracksInPlaylist: Array<
+    tracksInPlaylist?: Array<
       Pick<SpotifyApi.PlaylistTrackResponse['items'][0], 'track'>
     >
   }

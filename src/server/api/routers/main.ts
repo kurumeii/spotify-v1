@@ -213,13 +213,17 @@ export const mainRouter = createTRPCRouter({
     .input(
       z.object({
         playlistId: z.string().min(1),
-        trackUri: z.string().array().min(1),
+        trackUri: z.string().min(1),
       })
     )
     .mutation(async ({ input }) => {
       try {
         const { playlistId, trackUri } = input
-        await spotifyApi.removeTracksFromPlaylist(playlistId, trackUri)
+        await spotifyApi.removeTracksFromPlaylist(playlistId, [
+          {
+            uri: trackUri,
+          },
+        ])
         return {
           data: 'OK',
         }
