@@ -16,20 +16,22 @@ const inter = Inter({
 const Layout: FC<Props> = ({ children }) => {
   return (
     <main
-      className={`${inter.className} box-border h-screen select-none overflow-hidden bg-base-100`}
+      className={`${inter.className} box-border select-none overflow-hidden bg-base-100 `}
     >
-      <div className='flex h-[90%] w-full flex-1'>
-        <Sidebar />
-        <div className='h-full w-full'>
+      <div className='grid h-screen w-full grid-cols-3 grid-rows-3 justify-center overflow-hidden  md:grid-cols-5 '>
+        <div className='col-span-1 row-span-3 hidden max-w-sm bg-base-300 px-5 py-7 text-sm text-base-content md:block'>
+          <Sidebar />
+        </div>
+        <div className='col-span-3 row-span-3 md:col-span-4'>
           <div className='sticky top-0 flex h-[10%] flex-1 items-center justify-end bg-transparent px-5'>
             <UserDropDown />
           </div>
           <div className='flex h-[90%] flex-1 flex-col p-5'>{children}</div>
         </div>
+        <footer className='sticky bottom-0 z-30 col-span-full'>
+          <CurrentTrack />
+        </footer>
       </div>
-      <footer className='fixed bottom-0 z-30 flex h-[10%] w-full flex-1 items-center justify-center border-t border-t-zinc-800 bg-neutral-900 px-5 text-white'>
-        <CurrentTrack />
-      </footer>
     </main>
   )
 }
