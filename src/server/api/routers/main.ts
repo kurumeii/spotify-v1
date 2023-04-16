@@ -232,4 +232,22 @@ export const mainRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
     }),
+  removePlaylist: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.string().min(1),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const { playlistId } = input
+        await spotifyApi.unfollowPlaylist(playlistId)
+        return {
+          data: 'OK',
+        }
+      } catch (error) {
+        console.error(error)
+        throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
+    }),
 })

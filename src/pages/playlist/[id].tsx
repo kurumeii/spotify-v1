@@ -45,24 +45,26 @@ const Playlist: NextPageWithLayout = () => {
     (state: RootState) => state.track
   )
   const dispatch = useAppDispatch()
-  const { data: playlistData } = api.main.getDetailPlaylistById.useQuery(
-    {
-      playlistId,
-    },
-    { refetchOnWindowFocus: false }
-  )
+  const { data: playlistData, refetch: detailPlaylistRefetch } =
+    api.main.getDetailPlaylistById.useQuery(
+      {
+        playlistId,
+      },
+      { refetchOnWindowFocus: false }
+    )
 
-  const { data: tracksObj } = api.main.getTracksFromPlaylist.useQuery(
-    {
-      playlistId,
-      page,
-    },
-    {
-      refetchOnWindowFocus: false,
-      keepPreviousData: true,
-      staleTime: 30 * 1000,
-    }
-  )
+  const { data: tracksObj, refetch: tracksFromPlaylistRefetch } =
+    api.main.getTracksFromPlaylist.useQuery(
+      {
+        playlistId,
+        page,
+      },
+      {
+        refetchOnWindowFocus: false,
+        keepPreviousData: true,
+        // staleTime: 30 * 1000,
+      }
+    )
 
   if (!playlistData || !tracksObj) return null
   return (
@@ -116,7 +118,11 @@ const Playlist: NextPageWithLayout = () => {
       <div className='no-scrollbar flex h-1/2 flex-1 overflow-y-auto '>
         <table className='table w-full '>
           <TableHead />
-          <TableBody page={page} trackObjItems={tracksObj.items} />
+          <TableBody
+            page={page}
+            trackObjItems={tracksObj.items}
+            refetchAll={{ tracksFromPlaylistRefetch, detailPlaylistRefetch }}
+          />
           <TableFooter
             page={page}
             setPage={setPage}

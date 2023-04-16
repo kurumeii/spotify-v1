@@ -2,12 +2,13 @@ import { togglePlayTrack } from '@/slices/trackSlice'
 import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
+import { type QueryObserverResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { PauseIcon, PlayIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { type FC } from 'react'
+import { useCallback, type FC } from 'react'
 import { useSelector } from 'react-redux'
 import {
   ContextMenu,
@@ -21,12 +22,18 @@ import {
 
 dayjs.extend(relativeTime)
 
+type Refetch = () => Promise<QueryObserverResult<unknown, unknown>>
+
 type Props = {
   page: number
   trackObjItems: SpotifyApi.PlaylistTrackObject[]
+  refetchAll: {
+    tracksFromPlaylistRefetch: Refetch
+    detailPlaylistRefetch: Refetch
+  }
 }
 
-const TableBody: FC<Props> = ({ page, trackObjItems }) => {
+const TableBody: FC<Props> = ({ page, trackObjItems, refetchAll }) => {
   const router = useRouter()
   const playlistId = router.query.id as string
   const dispatch = useAppDispatch()
@@ -40,7 +47,15 @@ const TableBody: FC<Props> = ({ page, trackObjItems }) => {
   )
 
   const removeTrack = api.main.removeTrackFromPlaylist.useMutation()
-
+  const removeTrackHandle = useCallback(
+    async (uri: string) => {
+      const { detailPlaylistRefetch, tracksFromPlaylistRefetch } = refetchAll
+      await removeTrack.mutateAsync({ playlistId, trackUri: uri })
+      void detailPlaylistRefetch()
+      void tracksFromPlaylistRefetch()
+    },
+    [playlistId, refetchAll, removeTrack]
+  )
   return (
     <>
       <tbody>
@@ -104,12 +119,7 @@ const TableBody: FC<Props> = ({ page, trackObjItems }) => {
               <ContextMenuContent className='w-64'>
                 <ContextMenuItem
                   inset
-                  onClick={() =>
-                    removeTrack.mutate({
-                      playlistId: playlistId,
-                      trackUri: track.uri,
-                    })
-                  }
+                  onClick={() => void removeTrackHandle(track.uri)}
                 >
                   Remove from playlist
                 </ContextMenuItem>

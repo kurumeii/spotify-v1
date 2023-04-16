@@ -209,7 +209,7 @@ const Sidebar: FC = () => {
         </div>
         <Separator />
         {/* Get playlist from current users */}
-        <UserPlaylists />
+        <UserPlaylists refetchData={getUserPlaylists.refetch} />
       </div>
     </div>
   )
