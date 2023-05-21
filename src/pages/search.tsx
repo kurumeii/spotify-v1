@@ -100,16 +100,11 @@ const Search: NextPageWithLayout = () => {
       <br />
       <div className='no-scrollbar grid w-full grid-cols-1 gap-2 overflow-y-auto'>
         {searchSong.data?.songs?.map(
-          ({ name, id, duration_ms, album, artists, uri }, idx, arr) => (
+          ({ name, id, duration_ms, album, artists, uri }) => (
             <Fragment key={id}>
               <ContextMenu>
                 <ContextMenuTrigger>
                   <div
-                    ref={el =>
-                      idx === arr.length - 1
-                        ? (lastItemInBatch.current = el)
-                        : null
-                    }
                     className={cn(
                       isDarkTheme
                         ? 'bg-zinc-800 hover:bg-zinc-700'
@@ -198,11 +193,14 @@ const Search: NextPageWithLayout = () => {
             </Fragment>
           )
         )}
-        {searchSong.isFetching && (
-          <div className='inline-flex w-full items-center justify-center'>
+        <div
+          ref={lastItemInBatch}
+          className='inline-flex w-full items-center justify-center'
+        >
+          {searchSong.isFetching && (
             <Loader2Icon className='h-6 w-6 animate-spin' />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </>
   )
