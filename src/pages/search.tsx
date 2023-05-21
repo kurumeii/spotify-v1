@@ -195,7 +195,7 @@ const Search: NextPageWithLayout = () => {
         )}
         <div
           ref={lastItemInBatch}
-          className='inline-flex w-full items-center justify-center'
+          className='inline-flex w-full items-center justify-center p-2'
         >
           {searchSong.isFetching && (
             <Loader2Icon className='h-6 w-6 animate-spin' />
