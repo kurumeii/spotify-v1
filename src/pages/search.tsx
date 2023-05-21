@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
 const Search: NextPageWithLayout = () => {
   const { isDarkTheme } = useToggleTheme()
   const [search, setSearch] = useState('')
-  const [query] = useDebounce(search, 300)
+  const [query] = useDebounce(search, 1000)
   const [offset, setOffset] = useState(0)
   const searchSong = api.main.searchSong.useQuery(
     {
@@ -59,9 +59,8 @@ const Search: NextPageWithLayout = () => {
     },
     {
       refetchOnWindowFocus: false,
-      staleTime: 30 * 1000,
       keepPreviousData: true,
-      enabled: search !== '',
+      enabled: query !== '',
     }
   )
   const {
@@ -80,8 +79,11 @@ const Search: NextPageWithLayout = () => {
   const { inViewport } = useInViewport(lastItemInBatch)
   useEffect(() => {
     inViewport && setOffset(prev => prev + 10)
+  }, [inViewport])
+
+  useEffect(() => {
     query === '' && setOffset(0)
-  }, [inViewport, query])
+  }, [query])
 
   return (
     <>
@@ -96,109 +98,103 @@ const Search: NextPageWithLayout = () => {
       />
       <br />
       <div className='no-scrollbar grid w-full grid-cols-1 gap-2 overflow-y-auto'>
-        {searchSong.isLoading ? (
-          <div className='flex w-full justify-center'>
-            <Loader2Icon className='h-8 w-8 animate-spin' />
-          </div>
-        ) : (
-          searchSong.data?.songs?.map(
-            ({ name, id, duration_ms, album, artists, uri }, idx, arr) => (
-              <Fragment key={id}>
-                <ContextMenu>
-                  <ContextMenuTrigger>
-                    <div
-                      ref={el =>
-                        idx === arr.length - 1
-                          ? (lastItemInBatch.current = el)
-                          : null
-                      }
-                      className={cn(
-                        isDarkTheme
-                          ? 'bg-zinc-800 hover:bg-zinc-700'
-                          : 'bg-base-300 shadow-lg hover:shadow-xl',
-                        'h-24 w-full overflow-hidden rounded-md text-base-content transition-all'
-                      )}
-                      onClick={() => {
-                        dispatch(
-                          togglePlayTrack({
-                            playState: !playState,
-                            trackUri: uri,
-                            trackProgress,
-                            type: 'track',
-                          })
-                        )
-                      }}
-                    >
-                      {album.images.length > 0 && (
-                        <div className='group inline-flex h-full w-full cursor-pointer items-center gap-x-5 text-sm'>
-                          <div className='relative bg-black/30'>
-                            <Image
-                              src={album.images[0]?.url || ''}
-                              alt={album.images[0]?.url || ''}
-                              width={100}
-                              height={100}
-                              className='object-cover'
-                            />
-                            <div
+        {searchSong.data?.songs?.map(
+          ({ name, id, duration_ms, album, artists, uri }, idx, arr) => (
+            <Fragment key={id}>
+              <ContextMenu>
+                <ContextMenuTrigger>
+                  <div
+                    ref={el =>
+                      idx === arr.length - 1
+                        ? (lastItemInBatch.current = el)
+                        : null
+                    }
+                    className={cn(
+                      isDarkTheme
+                        ? 'bg-zinc-800 hover:bg-zinc-700'
+                        : 'bg-base-300 shadow-lg hover:shadow-xl',
+                      'h-24 w-full overflow-hidden rounded-md text-base-content transition-all'
+                    )}
+                    onClick={() => {
+                      dispatch(
+                        togglePlayTrack({
+                          playState: !playState,
+                          trackUri: uri,
+                          trackProgress,
+                          type: 'track',
+                        })
+                      )
+                    }}
+                  >
+                    {album.images.length > 0 && (
+                      <div className='group inline-flex h-full w-full cursor-pointer items-center gap-x-5 text-sm'>
+                        <div className='relative bg-black/30'>
+                          <Image
+                            src={album.images[0]?.url || ''}
+                            alt={album.images[0]?.url || ''}
+                            width={100}
+                            height={100}
+                            className='object-cover'
+                          />
+                          <div
+                            className={cn(
+                              'absolute top-0  h-full w-full items-center justify-center bg-black/30 ',
+                              playState && trackUri === uri
+                                ? 'flex'
+                                : 'hidden group-hover:flex'
+                            )}
+                          >
+                            <button
                               className={cn(
-                                'absolute top-0  h-full w-full items-center justify-center bg-black/30 ',
-                                playState && trackUri === uri
-                                  ? 'flex'
-                                  : 'hidden group-hover:flex'
+                                'btn-success btn-circle btn-lg btn'
                               )}
                             >
-                              <button
-                                className={cn(
-                                  'btn-success btn-circle btn-lg btn'
-                                )}
-                              >
-                                {playState && trackUri === uri ? (
-                                  <PauseIcon className='h-7 w-7 fill-current stroke-transparent' />
-                                ) : (
-                                  <PlayIcon className='h-7 w-7 fill-current stroke-transparent' />
-                                )}
-                              </button>
-                            </div>
-                          </div>
-                          <div className='truncate'>
-                            <span>{name}</span>
-                            <br />
-                            <span className='text-xs text-base-content/70'>
-                              {artists.map(artist => artist.name).join(',')}
-                            </span>
-                          </div>
-                          <div className='mr-5 flex flex-1 justify-end'>
-                            {dayjs(duration_ms).format('mm:ss')}
+                              {playState && trackUri === uri ? (
+                                <PauseIcon className='h-7 w-7 fill-current stroke-transparent' />
+                              ) : (
+                                <PlayIcon className='h-7 w-7 fill-current stroke-transparent' />
+                              )}
+                            </button>
                           </div>
                         </div>
-                      )}
-                    </div>
-                  </ContextMenuTrigger>
-                  <ContextMenuContent className='w-64'>
-                    <ContextMenuSub>
-                      <ContextMenuSubTrigger inset>
-                        Add to playlist
-                      </ContextMenuSubTrigger>
-                      <ContextMenuSubContent className='no-scrollbar h-64 overflow-y-auto'>
-                        {basicInfo.map(info => (
-                          <ContextMenuItem
-                            key={info.id}
-                            onClick={() =>
-                              addTrackToPlaylistMutation.mutate({
-                                playlistId: info.id,
-                                trackUri: [uri],
-                              })
-                            }
-                          >
-                            {info.name}
-                          </ContextMenuItem>
-                        ))}
-                      </ContextMenuSubContent>
-                    </ContextMenuSub>
-                  </ContextMenuContent>
-                </ContextMenu>
-              </Fragment>
-            )
+                        <div className='truncate'>
+                          <span>{name}</span>
+                          <br />
+                          <span className='text-xs text-base-content/70'>
+                            {artists.map(artist => artist.name).join(',')}
+                          </span>
+                        </div>
+                        <div className='mr-5 flex flex-1 justify-end'>
+                          {dayjs(duration_ms).format('mm:ss')}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </ContextMenuTrigger>
+                <ContextMenuContent className='w-64'>
+                  <ContextMenuSub>
+                    <ContextMenuSubTrigger inset>
+                      Add to playlist
+                    </ContextMenuSubTrigger>
+                    <ContextMenuSubContent className='no-scrollbar h-64 overflow-y-auto'>
+                      {basicInfo.map(info => (
+                        <ContextMenuItem
+                          key={info.id}
+                          onClick={() =>
+                            addTrackToPlaylistMutation.mutate({
+                              playlistId: info.id,
+                              trackUri: [uri],
+                            })
+                          }
+                        >
+                          {info.name}
+                        </ContextMenuItem>
+                      ))}
+                    </ContextMenuSubContent>
+                  </ContextMenuSub>
+                </ContextMenuContent>
+              </ContextMenu>
+            </Fragment>
           )
         )}
         {searchSong.isFetching && (
