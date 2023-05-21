@@ -65,7 +65,7 @@ const Playlist: NextPageWithLayout = () => {
         // staleTime: 30 * 1000,
       }
     )
-
+  const savedPlaylistCtx = api.useContext().main.getUserPlaylists
   if (!playlistData || !tracksObj) return null
   return (
     <>
@@ -82,6 +82,7 @@ const Playlist: NextPageWithLayout = () => {
                   trackProgress,
                 })
               )
+              void savedPlaylistCtx.invalidate()
             }}
           >
             <Image

@@ -47,6 +47,8 @@ const TableBody: FC<Props> = ({ page, trackObjItems, refetchAll }) => {
   )
 
   const removeTrack = api.main.removeTrackFromPlaylist.useMutation()
+  const savedPlaylistCtx = api.useContext().main.getUserPlaylists
+
   const removeTrackHandle = useCallback(
     async (uri: string) => {
       const { detailPlaylistRefetch, tracksFromPlaylistRefetch } = refetchAll
@@ -86,7 +88,7 @@ const TableBody: FC<Props> = ({ page, trackObjItems, refetchAll }) => {
                         trackOffset: idx + page * 10 - 10,
                       })
                     )
-                    // tracksObj.offset
+                    void savedPlaylistCtx.invalidate()
                   }}
                 >
                   <td>

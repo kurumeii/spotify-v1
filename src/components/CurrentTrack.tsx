@@ -14,7 +14,8 @@ const CurrentTrack = () => {
     undefined,
     {
       refetchOnWindowFocus: true,
-      refetchInterval: 20 * 1000,
+      // refetchInterval: 20 * 1000,
+      staleTime: 20 * 1000,
     }
   )
 

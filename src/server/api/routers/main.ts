@@ -250,4 +250,37 @@ export const mainRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
     }),
+  searchSong: protectedProcedure
+    .input(
+      z.object({
+        query: z.string().trim(),
+        offset: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      try {
+        const songs = []
+        for (let i = 0; i <= input.offset; i += 10) {
+          const { body, statusCode } = await spotifyApi.searchTracks(
+            input.query,
+            {
+              limit: 10,
+              offset: i + 1,
+              market: 'VN',
+            }
+          )
+          if (statusCode !== 200 || !body.tracks) {
+            throw new TRPCError({ code: 'NOT_FOUND' })
+          }
+          songs.push(...body.tracks.items)
+        }
+
+        return {
+          songs,
+        }
+      } catch (error) {
+        console.error(error)
+        throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
+    }),
 })

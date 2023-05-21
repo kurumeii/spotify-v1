@@ -78,7 +78,6 @@ const Sidebar: FC = () => {
   const addNewPlaylist = api.main.addNewPlaylist.useMutation()
   const getUserPlaylists = api.main.getUserPlaylists.useQuery(undefined, {
     refetchOnWindowFocus: false,
-    refetchInterval: 10 * 1000,
     onSuccess: data => {
       dispatch(
         setSavedPlaylist({
