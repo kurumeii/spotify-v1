@@ -34,18 +34,16 @@ type SidebarProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   link?: string
 }
 
-const SideBarBtn: FC<SidebarProps> = ({ Icon, label, link, ...props }) => {
+const SideBarBtn: FC<SidebarProps> = ({ Icon, label, ...props }) => {
   return (
     <>
-      <Link href={link ?? '/#'} replace>
-        <button
-          className='flex w-full items-center gap-x-2 px-2 pt-2 opacity-80 transition-all   hover:opacity-100'
-          {...props}
-        >
-          <Icon className='h-6 w-6' />
-          <span className='first-letter:uppercase'>{label}</span>
-        </button>
-      </Link>
+      <button
+        className='flex w-full items-center gap-x-2 px-2 pt-2 opacity-80 transition-all hover:opacity-100'
+        {...props}
+      >
+        <Icon className='h-6 w-6' />
+        <span className='first-letter:uppercase'>{label}</span>
+      </button>
     </>
   )
 }
@@ -110,8 +108,10 @@ const Sidebar: FC = () => {
       <Link href='/'>
         <SpotifyLogo />
       </Link>
-      {coreFunctionBtn.map(({ ...props }, id) => (
-        <SideBarBtn key={id} {...props} />
+      {coreFunctionBtn.map(({ link, ...props }, id) => (
+        <Link key={id} href={link ?? '/#'} replace>
+          <SideBarBtn {...props} />
+        </Link>
       ))}
       <div className='pt-4'>
         <SideBarBtn

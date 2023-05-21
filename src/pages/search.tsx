@@ -94,6 +94,7 @@ const Search: NextPageWithLayout = () => {
         defaultValue={query}
         onChange={e => setSearch(e.target.value)}
         type='search'
+        className='md:max-w-xs'
         placeholder='What song do you want to search ?'
       />
       <br />

@@ -19,7 +19,7 @@ const Layout: FC<Props> = ({ children }) => {
       className={`${inter.className} box-border select-none overflow-hidden bg-base-100 `}
     >
       <div className='grid h-screen w-full grid-cols-3 grid-rows-3 justify-center overflow-hidden  md:grid-cols-5 '>
-        <div className='col-span-1 row-span-3 hidden max-w-sm bg-base-300 px-5 py-7 text-sm text-base-content md:block'>
+        <div className='col-span-1 row-span-3 hidden w-[300px] bg-base-300 px-5 py-7 text-sm text-base-content md:block'>
           <Sidebar />
         </div>
         <div className='col-span-3 row-span-3 md:col-span-4'>
