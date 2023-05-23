@@ -31,8 +31,11 @@ const MyApp = ({ Component, pageProps: { ...pageProps } }: MyAppProps) => {
       </Head>
       <ThemeProvider
         attribute='data-theme'
+        enableSystem={false}
+        disableTransitionOnChange
+        enableColorScheme={false}
         defaultTheme={THEME.DARK}
-        themes={[THEME.DARK, THEME.LIGHT]}
+        themes={[THEME.DARK]}
       >
         <SessionProvider session={pageProps.session as Session}>
           <ReduxProvider store={myStore}>

@@ -61,7 +61,8 @@ const coreFunctionBtn: Array<SidebarProps> = [
   },
   {
     Icon: LibraryIcon,
-    label: 'Library',
+    label: 'Playlists',
+    link: '/playlist',
   },
 ]
 
@@ -116,7 +117,7 @@ const Sidebar: FC = () => {
       <div className='pt-4'>
         <SideBarBtn
           Icon={ListPlusIcon}
-          label='Create new library'
+          label='Create new playlist'
           onClick={() => setOpen(true)}
         />
 

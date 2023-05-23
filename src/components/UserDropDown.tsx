@@ -2,13 +2,20 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown'
 import useToggleTheme from '@/hooks/useToggleTheme'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
-import { ChevronDownIcon, MoonIcon, SunIcon, UserIcon } from 'lucide-react'
+import {
+  ChevronDownIcon,
+  LogOutIcon,
+  MoonIcon,
+  SunIcon,
+  UserIcon,
+} from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -52,23 +59,16 @@ const UserDropDown = () => {
             ) : (
               <UserIcon className='h-6 w-6' />
             )}
-            <span>{userData.display_name}</span>
+
             <ChevronDownIcon
               className={cn(isClicked && 'rotate-180 ', 'transition-transform')}
             />
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent sideOffset={10} className='w-48' align='end'>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <div className='flex justify-between' onClick={toggleTheme}>
-              Change theme
-              {isDarkTheme ? <SunIcon /> : <MoonIcon />}
-            </div>
-          </DropdownMenuItem>
+          <DropdownMenuLabel>Hello, {userData.display_name}</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => void signOut()}>
+            <LogOutIcon className='mr-2 h-5 w-5' />
             Log out
           </DropdownMenuItem>
         </DropdownMenuContent>

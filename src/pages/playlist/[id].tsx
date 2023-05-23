@@ -14,6 +14,7 @@ import { useState, type ReactElement } from 'react'
 import { useSelector } from 'react-redux'
 import { type NextPageWithLayout } from '../_app'
 import TableFooter from '@/components/Playlists/TableFooter'
+import Head from 'next/head'
 
 type Props = {
   session: Awaited<ReturnType<typeof getServerAuthSession>>
@@ -69,6 +70,9 @@ const Playlist: NextPageWithLayout = () => {
   if (!playlistData || !tracksObj) return null
   return (
     <>
+      <Head>
+        <title>{playlistData.name} | playlist</title>
+      </Head>
       <div className='flex items-center gap-3'>
         {playlistData.images.length > 0 && (
           <div

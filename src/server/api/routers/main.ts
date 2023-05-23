@@ -9,10 +9,7 @@ export const mainRouter = createTRPCRouter({
     try {
       const { providerAccountId } = ctx.session.spotify
       const { body: spotifyResponse } = await spotifyApi.getUserPlaylists(
-        providerAccountId,
-        {
-          limit: 10,
-        }
+        providerAccountId
       )
       const { body: playingState } = await spotifyApi.getMyCurrentPlaybackState(
         {
