@@ -1,3 +1,3 @@
-export enum WebSpotifyPlayerName {
-  NAME = 'Spotify v1 player',
+export const WebSpotifyPlayerName = {
+  NAME: 'Spotify v1 player',
 }

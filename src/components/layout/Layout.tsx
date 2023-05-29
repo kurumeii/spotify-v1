@@ -1,8 +1,9 @@
-import CurrentTrack from '@/components/CurrentTrack'
 import Sidebar from '@/components/Sidebar/Sidebar'
 import { Inter } from 'next/font/google'
 import { type ReactNode, type FC } from 'react'
 import UserDropDown from '../UserDropDown'
+import dynamic from 'next/dynamic'
+const CurrentTrack = dynamic(() => import('@/components/CurrentTrack'))
 
 type Props = {
   children: ReactNode
