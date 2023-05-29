@@ -1,16 +1,16 @@
+import { useAppDispatch, useAppSelector } from '@/hooks/useReduxHook'
 import useToggleTheme from '@/hooks/useToggleTheme'
 import { setTopPlayed } from '@/slices/topTrackSlice'
 import { togglePlayTrack } from '@/slices/trackSlice'
-import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import { PauseIcon, PlayIcon } from 'lucide-react'
 import Image from 'next/image'
 import { type FC } from 'react'
-import { useSelector } from 'react-redux'
 
 const TopPlayedTracks: FC = () => {
   const { isDarkTheme } = useToggleTheme()
+  const dispatch = useAppDispatch()
   const { data: myTopTracks, isError } = api.main.getMyTopTracks.useQuery(
     undefined,
     {
@@ -27,11 +27,9 @@ const TopPlayedTracks: FC = () => {
     }
   )
 
-  const { playState, trackProgress, trackUri } = useSelector(
-    (state: RootState) => state.track
+  const { playState, trackProgress, trackUri } = useAppSelector(
+    state => state.track
   )
-
-  const dispatch = useAppDispatch()
 
   if (isError || !myTopTracks) return null
 

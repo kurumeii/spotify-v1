@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit'
-import trackReducer from '@/slices/trackSlice'
-import topPlayedReducer from '@/slices/topTrackSlice'
 import savedPlaylistReducer from '@/slices/savedPlaylisSlice'
-import { useDispatch } from 'react-redux'
+import topPlayedReducer from '@/slices/topTrackSlice'
+import trackReducer from '@/slices/trackSlice'
+import { configureStore } from '@reduxjs/toolkit'
+
 export const myStore = configureStore({
   reducer: {
     track: trackReducer,
@@ -13,6 +13,4 @@ export const myStore = configureStore({
 
 export type RootState = ReturnType<typeof myStore.getState>
 
-type AppDispatch = typeof myStore.dispatch
-
-export const useAppDispatch: () => AppDispatch = useDispatch
+export type AppDispatch = typeof myStore.dispatch

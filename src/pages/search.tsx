@@ -9,10 +9,10 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/ContextMenu'
 import { Input } from '@/components/ui/Input'
+import { useAppDispatch, useAppSelector } from '@/hooks/useReduxHook'
 import useToggleTheme from '@/hooks/useToggleTheme'
 import { getServerAuthSession } from '@/server/auth'
 import { togglePlayTrack } from '@/slices/trackSlice'
-import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import dayjs from 'dayjs'
@@ -22,7 +22,6 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { useInViewport } from 'react-in-viewport'
-import { useSelector } from 'react-redux'
 import { useDebounce } from 'use-debounce'
 import { type NextPageWithLayout } from './_app'
 
@@ -63,11 +62,9 @@ const Search: NextPageWithLayout = () => {
       enabled: query !== '',
     }
   )
-  const {
-    playlistObj: { basicInfo },
-  } = useSelector((state: RootState) => state.savedPlaylist)
-  const { playState, trackProgress, trackUri } = useSelector(
-    (state: RootState) => state.track
+  const { playlistObj } = useAppSelector(state => state.savedPlaylist)
+  const { playState, trackProgress, trackUri } = useAppSelector(
+    state => state.track
   )
   const dispatch = useAppDispatch()
 
@@ -173,7 +170,7 @@ const Search: NextPageWithLayout = () => {
                       Add to playlist
                     </ContextMenuSubTrigger>
                     <ContextMenuSubContent className='no-scrollbar h-64 overflow-y-auto'>
-                      {basicInfo.map(info => (
+                      {playlistObj.map(info => (
                         <ContextMenuItem
                           key={info.id}
                           onClick={() =>

@@ -1,19 +1,15 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 export type PlaylistState = {
-  playlistObj: {
-    basicInfo: Array<{ id: string; name: string; isPlaying: boolean }>
-    tracksInPlaylist?: Array<
-      Pick<SpotifyApi.PlaylistTrackResponse['items'][0], 'track'>
-    >
-  }
+  playlistObj: Array<{
+    id: string
+    name: string
+    isPlaying: boolean
+  }>
 }
 
 const initialState: PlaylistState = {
-  playlistObj: {
-    basicInfo: [],
-    tracksInPlaylist: [],
-  },
+  playlistObj: [],
 }
 
 export const savedPlaylistSlice = createSlice({
@@ -21,9 +17,7 @@ export const savedPlaylistSlice = createSlice({
   initialState,
   reducers: {
     setSavedPlaylist: (state, action: PayloadAction<PlaylistState>) => {
-      state.playlistObj.basicInfo = action.payload.playlistObj.basicInfo
-      state.playlistObj.tracksInPlaylist =
-        action.payload.playlistObj.tracksInPlaylist
+      state.playlistObj = action.payload.playlistObj
     },
   },
 })

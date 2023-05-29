@@ -29,16 +29,16 @@ export const mainRouter = createTRPCRouter({
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }
   }),
-  getUserCurrentlyPlaying: protectedProcedure.query(async ({ ctx }) => {
+  getUserCurrentlyPlaying: protectedProcedure.query(async () => {
     try {
-      const { access_token } = ctx.session.spotify
       const spotifyResponse = await spotifyApi.getMyCurrentPlayingTrack({
         market: 'VN',
       })
+      const accessToken = spotifyApi.getAccessToken()
       if (!spotifyResponse) throw new TRPCError({ code: 'BAD_REQUEST' })
       const { is_playing, item, context, progress_ms } = spotifyResponse.body
       return {
-        accessToken: access_token,
+        accessToken,
         is_playing: is_playing,
         trackDetail: item,
         context,

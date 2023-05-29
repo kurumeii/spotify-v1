@@ -1,5 +1,6 @@
+import { usePlaylist } from '@/hooks/usePlaylist'
+import { useAppDispatch, useAppSelector } from '@/hooks/useReduxHook'
 import { togglePlayTrack } from '@/slices/trackSlice'
-import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import { type QueryObserverResult } from '@tanstack/react-query'
@@ -9,7 +10,6 @@ import { PauseIcon, PlayIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useCallback, type FC } from 'react'
-import { useSelector } from 'react-redux'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -38,16 +38,14 @@ const TableBody: FC<Props> = ({ page, trackObjItems, refetchAll }) => {
   const playlistId = router.query.id as string
   const dispatch = useAppDispatch()
 
-  const {
-    playlistObj: { basicInfo },
-  } = useSelector((state: RootState) => state.savedPlaylist)
+  const { playlistObj } = useAppSelector(state => state.savedPlaylist)
 
-  const { playState, trackUri, trackProgress } = useSelector(
-    (state: RootState) => state.track
+  const { playState, trackUri, trackProgress } = useAppSelector(
+    state => state.track
   )
 
   const removeTrack = api.main.removeTrackFromPlaylist.useMutation()
-  const savedPlaylistCtx = api.useContext().main.getUserPlaylists
+  const savedPlaylist = usePlaylist()
 
   const removeTrackHandle = useCallback(
     async (uri: string) => {
@@ -68,7 +66,7 @@ const TableBody: FC<Props> = ({ page, trackObjItems, refetchAll }) => {
               <ContextMenuTrigger asChild>
                 <tr
                   className={cn(
-                    'group hover text-sm',
+                    'hover group text-sm',
                     playState && trackUri === track.uri
                       ? 'active text-green-500'
                       : !playState && trackUri === track.uri
@@ -88,7 +86,7 @@ const TableBody: FC<Props> = ({ page, trackObjItems, refetchAll }) => {
                         trackOffset: idx + page * 10 - 10,
                       })
                     )
-                    void savedPlaylistCtx.invalidate()
+                    void savedPlaylist.refetch()
                   }}
                 >
                   <td>
@@ -130,7 +128,7 @@ const TableBody: FC<Props> = ({ page, trackObjItems, refetchAll }) => {
                     Add to playlist
                   </ContextMenuSubTrigger>
                   <ContextMenuSubContent className='no-scrollbar h-64 overflow-y-auto'>
-                    {basicInfo.map(info => (
+                    {playlistObj.map(info => (
                       <ContextMenuItem
                         key={info.id}
                         onClick={() => console.log(info.id)}

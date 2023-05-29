@@ -1,16 +1,16 @@
 import CurrentTrack from '@/components/CurrentTrack'
-import Sidebar from '@/components/Sidebar'
+import Sidebar from '@/components/Sidebar/Sidebar'
 import { Inter } from 'next/font/google'
-import { type FC } from 'react'
+import { type ReactNode, type FC } from 'react'
 import UserDropDown from '../UserDropDown'
 
 type Props = {
-  children: JSX.Element
+  children: ReactNode
 }
 
 const inter = Inter({
   subsets: ['latin', 'vietnamese'],
-  weight: ['500', '700'],
+  weight: ['100', '200', '300', '400', '500', '700'],
 })
 
 const Layout: FC<Props> = ({ children }) => {

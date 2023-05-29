@@ -30,5 +30,5 @@
     "**/*.mjs",
     "src/store/store.js"
   ],
-  "exclude": ["node_modules", "tailwind.config.ts"]
+  "exclude": ["node_modules"]
 }

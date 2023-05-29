@@ -1,20 +1,20 @@
 import TableBody from '@/components/Playlists/TableBody'
+import TableFooter from '@/components/Playlists/TableFooter'
 import TableHead from '@/components/Playlists/TableHead'
 import Layout from '@/components/layout/Layout'
+import { usePlaylist } from '@/hooks/usePlaylist'
+import { useAppDispatch, useAppSelector } from '@/hooks/useReduxHook'
 import { getServerAuthSession } from '@/server/auth'
 import { togglePlayTrack } from '@/slices/trackSlice'
-import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import { PauseIcon, PlayIcon } from 'lucide-react'
 import { type GetServerSideProps } from 'next'
+import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState, type ReactElement } from 'react'
-import { useSelector } from 'react-redux'
 import { type NextPageWithLayout } from '../_app'
-import TableFooter from '@/components/Playlists/TableFooter'
-import Head from 'next/head'
 
 type Props = {
   session: Awaited<ReturnType<typeof getServerAuthSession>>
@@ -42,10 +42,11 @@ const Playlist: NextPageWithLayout = () => {
   const playlistId = router.query.id as string
   const [page, setPage] = useState(1)
 
-  const { playState, trackProgress, playlistUri } = useSelector(
-    (state: RootState) => state.track
+  const { playState, trackProgress, playlistUri } = useAppSelector(
+    state => state.track
   )
   const dispatch = useAppDispatch()
+
   const { data: playlistData, refetch: detailPlaylistRefetch } =
     api.main.getDetailPlaylistById.useQuery(
       {
@@ -66,7 +67,7 @@ const Playlist: NextPageWithLayout = () => {
         // staleTime: 30 * 1000,
       }
     )
-  const savedPlaylistCtx = api.useContext().main.getUserPlaylists
+  const savedPlaylist = usePlaylist()
   if (!playlistData || !tracksObj) return null
   return (
     <>
@@ -86,7 +87,7 @@ const Playlist: NextPageWithLayout = () => {
                   trackProgress,
                 })
               )
-              void savedPlaylistCtx.invalidate()
+              void savedPlaylist.refetch()
             }}
           >
             <Image

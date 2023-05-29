@@ -5,32 +5,27 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from '@/components/ui/ContextMenu'
-import { type RootState } from '@/store/store'
+import { usePlaylist } from '@/hooks/usePlaylist'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
-import { type QueryObserverResult } from '@tanstack/react-query'
 import { HeadphonesIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { type FC } from 'react'
-import { useSelector } from 'react-redux'
 
-type Props = {
-  refetchData: () => Promise<QueryObserverResult<unknown, unknown>>
-}
-
-const UserPlaylists: FC<Props> = ({ refetchData }) => {
-  const { playlistObj } = useSelector((state: RootState) => state.savedPlaylist)
+const UserPlaylists: FC = () => {
+  const getUserPlaylists = usePlaylist()
   const removePlaylist = api.main.removePlaylist.useMutation()
+
   const deleteSavedPlaylist = async (id: string) => {
     await removePlaylist.mutateAsync({
       playlistId: id,
     })
-    void refetchData()
+    void getUserPlaylists.refetch()
   }
   return (
     <>
       <div className='no-scrollbar flex flex-col flex-wrap items-start gap-x-3 truncate text-xs'>
-        {playlistObj.basicInfo.map(({ id, name, isPlaying }) => (
+        {getUserPlaylists.data.map(({ id, name, isPlaying }) => (
           <ContextMenu key={id}>
             <Link href={`/playlist/${id}`} className='h-10 w-full'>
               <ContextMenuTrigger className='h-full w-full'>

@@ -1,11 +1,10 @@
+import { useAppDispatch, useAppSelector } from '@/hooks/useReduxHook'
 import useToggleTheme from '@/hooks/useToggleTheme'
 import { togglePlayTrack } from '@/slices/trackSlice'
-import { useAppDispatch, type RootState } from '@/store/store'
 import { api } from '@/utils/api'
 import { cn } from '@/utils/cn'
 import { PauseIcon, PlayIcon, RotateCcwIcon } from 'lucide-react'
 import Image from 'next/image'
-import { useSelector } from 'react-redux'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -17,13 +16,11 @@ import {
 } from '../ui/ContextMenu'
 
 const RecommenedTracks = () => {
-  const { playState, trackProgress, trackUri } = useSelector(
-    (state: RootState) => state.track
+  const { playState, trackProgress, trackUri } = useAppSelector(
+    state => state.track
   )
-  const {
-    playlistObj: { basicInfo },
-  } = useSelector((state: RootState) => state.savedPlaylist)
-  const { trackId } = useSelector((state: RootState) => state.topPlayedTrack)
+  const { playlistObj } = useAppSelector(state => state.savedPlaylist)
+  const { trackId } = useAppSelector(state => state.topPlayedTrack)
   const dispatch = useAppDispatch()
 
   const {
@@ -34,7 +31,7 @@ const RecommenedTracks = () => {
     { topTracks: trackId },
     {
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      enabled: trackId.length > 0,
     }
   )
 
@@ -115,7 +112,7 @@ const RecommenedTracks = () => {
                     Add to playlist
                   </ContextMenuSubTrigger>
                   <ContextMenuSubContent className='no-scrollbar h-64 overflow-y-auto'>
-                    {basicInfo.map(info => (
+                    {playlistObj.map(info => (
                       <ContextMenuItem
                         key={info.id}
                         onClick={() =>

@@ -12,10 +12,7 @@ export const topPlayedSlice = createSlice({
   name: 'TopPlayed',
   initialState,
   reducers: {
-    setTopPlayed: (
-      state: TopPlayedState,
-      action: PayloadAction<TopPlayedState>
-    ) => {
+    setTopPlayed: (state, action: PayloadAction<TopPlayedState>) => {
       state.trackId = action.payload.trackId
     },
   },
